@@ -1,0 +1,25 @@
+# Vim/Neovim
+config/nvim/.undodir/
+config/nvim/lazy-lock.json
+*.swp
+*.swo
+*~
+
+# Shell
+shell/.zsh_history
+shell/.zcompdump*
+
+# Logs
+*.log
+
+# Temporary files
+.tmp/
+.temp/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Local environment
+.env
+.env.local

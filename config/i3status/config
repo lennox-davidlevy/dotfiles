@@ -1,0 +1,49 @@
+general {
+    colors = true
+    interval = 2
+    color_good = "#50fa7b"      # Green
+    color_degraded = "#f1fa8c"  # Yellow
+    color_bad = "#ff5555"       # Red
+    markup = "pango"
+}
+
+order += "cpu_usage"
+order += "memory"
+order += "disk /"
+order += "disk /home"
+order += "ethernet _first_"
+order += "volume master"
+order += "load"
+order += "tztime local"
+
+cpu_usage {
+    format = "CPU usage: %usage"
+    max_threshold = 75
+    degraded_threshold = 50
+}
+
+memory {
+    format = "Memory usage: %used/%total (%percentage_used)"
+    threshold_degraded = "10%"
+    format_degraded = "🧠 LOW: %available"
+}
+
+ethernet _first_ {
+    format_up = "Upload: %ip ↑%speed"
+    format_down = "Download: disconnected"
+}
+
+volume master {
+    format = "Volume: %volume"
+    format_muted = "Volume: muted (%volume)"
+    device = "pulse"
+}
+
+load {
+    format = "Load: %5min"
+    max_threshold = "2.5"
+}
+
+tztime local {
+    format = "Date: %a %m/%d Time: %H:%M"
+}

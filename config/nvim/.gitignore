@@ -1,0 +1,41 @@
+# Plugin directory created by lazy.nvim
+lazy-lock.json
+
+# Compiled Lua files
+luac.out
+*.src.rock
+*.zip
+*.tar.gz
+
+# Neovim shada files (session data)
+**/shada/
+
+# Neovim logs
+.nvimlog
+
+# Undo directory
+.undodir/
+
+# Language server data
+.lsp/
+
+# Packer compiled
+packer_compiled.lua
+
+# Generated parser files
+parser/
+
+# Compiled treesitter parsers
+**/parser/*.so
+**/parser/*.dll
+**/parser/*.dylib
+
+# Cache files
+.cache/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Opencode
+.opencode/
