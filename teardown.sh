@@ -15,7 +15,7 @@ remove_packages() {
   done
 }
 
-remove_packages "ansible" "git" "python3" "python3-pip"
+remove_packages "ansible" "git" "python3-pip"
 
 echo "clean up"
 sudo dnf autoremove -y
