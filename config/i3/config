@@ -161,6 +161,7 @@ assign [class="Virt-manager"] workspace number $ws8
 assign [class="Org.gnome.Boxes"] workspace number $ws8
 assign [class="VirtualBox Manager"] workspace number $ws8
 assign [class="VirtualBox Machine"] workspace number $ws8
+assign [class="Evince"] workspace number $ws9
 assign [class="Postman"] workspace number $ws9
 assign [class="qBittorrent"] workspace number $ws9
 assign [class="kdenlive"] workspace number $ws9
