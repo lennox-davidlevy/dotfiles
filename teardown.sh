@@ -30,10 +30,16 @@ remove_packages() {
 
 remove_packages "ansible" "git" "python3-pip"
 
+if [ -d ~/Projects/github/dotfiles ]; then
+  echo "Removing dotfiles directory..."
+  rm -rf ~/Projects/github/dotfiles
+else
+  echo "Dotfiles directory not found, skipping..."
+fi
+
 echo "clean up"
 sudo dnf autoremove -y
 
 kill $SUDO_PID 2>/dev/null || true
 
 echo "teardown done bro"
-
