@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+echo "Enter your pw for sudo access..."
+sudo -v
+
+keep_sudo_alive() {
+  while true; do
+    sudo -v
+    sleep 50
+  done &
+  SUDO_PID=$!
+}
+
+keep_sudo_alive
+
 echo "lets start again cause we be testing..."
 
 remove_packages() {
@@ -20,4 +33,7 @@ remove_packages "ansible" "git" "python3-pip"
 echo "clean up"
 sudo dnf autoremove -y
 
+kill $SUDO_PID 2>/dev/null || true
+
 echo "teardown done bro"
+
