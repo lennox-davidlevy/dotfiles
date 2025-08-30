@@ -6,7 +6,7 @@ echo "lets start again cause we be testing..."
 remove_packages() {
   local packages=("$@")
   for package in "${packages[@]}"; do
-    if rpm -q "$packages" &>/dev/null; then
+    if rpm -q "$package" &>/dev/null; then
       echo "removing this bad boy: $package..."
       sudo dnf remove -y "$package"
     else
