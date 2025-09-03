@@ -13,6 +13,7 @@ return {
 		config = function()
 			require("mason-lspconfig").setup({
 				ensure_installed = {
+					"ansiblels",
 					"basedpyright",
 					"bashls",
 					"cssls",
@@ -147,6 +148,27 @@ return {
 						},
 						schemaStore = {
 							enable = true,
+						},
+					},
+				},
+			})
+			lspconfig.ansiblels.setup({
+				capabilities = capabilities,
+				filetypes = { "yaml", "yml" },
+				settings = {
+					ansible = {
+						ansible = {
+							path = "ansible",
+						},
+						executionEnvironment = {
+							enabled = false,
+						},
+						python = {
+							interpreterPath = "python3",
+						},
+						completion = {
+							provideRedirectModules = true,
+							provideModuleOptionAliases = true,
 						},
 					},
 				},

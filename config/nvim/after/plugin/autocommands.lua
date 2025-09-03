@@ -64,4 +64,11 @@ vim.cmd([[
           \ setfiletype yaml.docker-compose
   augroup END
 
+  augroup ansible_ft
+    autocmd!
+    " Detect Ansible files
+    autocmd BufRead,BufNewFile */playbooks/*.yml,*/playbooks/*.yaml,*/roles/*/tasks/*.yml,*/roles/*/tasks/*.yaml,*/roles/*/handlers/*.yml,*/roles/*/handlers/*.yaml,*/roles/*/defaults/*.yml,*/roles/*/defaults/*.yaml,*/roles/*/vars/*.yml,*/roles/*/vars/*.yaml,*/roles/*/meta/*.yml,*/roles/*/meta/*.yaml,*/inventory/*/hosts.yml,*/inventory/*/hosts.yaml,*/inventory/*/group_vars/*.yml,*/inventory/*/group_vars/*.yaml,*/inventory/*/host_vars/*.yml,*/inventory/*/host_vars/*.yaml
+          \ setfiletype yaml.ansible
+  augroup END
+
 ]])
