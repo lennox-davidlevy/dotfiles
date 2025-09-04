@@ -40,11 +40,22 @@
           ansible.builtin.dnf:
             name: "{{ packages.desktop }}"
             state: present
+    - name: Debug all user-related variables
+      ansible.builtin.debug:
+        msg:
+          - "ansible_user_id: {{ ansible_user_id }}"
+          - "ansible_user_dir: {{ ansible_user_dir }}"
+          - "ansible_env.HOME: {{ ansible_env.HOME }}"
+          - "ansible_env.USER: {{ ansible_env.USER }}"
+          - "ansible_real_user_id: {{ ansible_real_user_id | default('not set') }}"
+          - "ansible_become_user: {{ ansible_become_user | default('not set') }}"
+      become: true
+      become_user: "{{ ansible_user_id }}"
     - name: Symlink Config
+      become: true
+      become_user: david
       block:
         - name: Symlink neovim config
-          become: true
-          become_user: david
           block:
             - name: Remove existing nvim config if it exists
               ansible.builtin.file:
