@@ -43,15 +43,15 @@
     - name: Symlink Config
       block:
         - name: Symlink neovim config
+          become: true
+          become_user: david
           block:
             - name: Remove existing nvim config if it exists
               ansible.builtin.file:
                 path: "{{ ansible_env.HOME }}/.config/nvim"
                 state: absent
-              become: false
             - name: Create nvim config symlink
               ansible.builtin.file:
                 src: "{{ playbook_dir }}/../config/nvim"
                 dest: "{{ ansible_env.HOME }}/.config/nvim"
                 state: link
-              become: false
