@@ -1,0 +1,42 @@
+---
+- name: Bootstrap Fedora Dev Environment
+  hosts: localhost
+  become: true
+  vars_files:
+    - packages.yml
+  tasks:
+    - name: System setup
+      block:
+        - name: Update system packages
+          ansible.builtin.dnf:
+            name: "*"
+            state: latest # noqa package-latest
+          tags: system-update
+
+        - name: Enable COPR repos
+          community.general.copr:
+            name: "{{ item }}"
+            state: enabled
+          loop: "{{ copr_repositories }}"
+
+    - name: Package Installation
+      block:
+        - name: Install core packages
+          ansible.builtin.dnf:
+            name: "{{ packages.core }}"
+            state: present
+
+        - name: Install editor packages
+          ansible.builtin.dnf:
+            name: "{{ packages.editors }}"
+            state: present
+
+        - name: Install development packages
+          ansible.builtin.dnf:
+            name: "{{ packages.development }}"
+            state: present
+
+        - name: Install desktop packages
+          ansible.builtin.dnf:
+            name: "{{ packages.desktop }}"
+            state: present

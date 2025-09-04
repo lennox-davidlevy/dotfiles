@@ -24,6 +24,8 @@ return {
 				html = { "prettierd" },
 				json = { "prettierd" },
 				markdown = { "prettierd" },
+				yaml = { "prettierd" },
+				yml = { "prettierd" },
 				zsh = { "shfmt" },
 				sh = { "shfmt" },
 				rust = { "rustfmt" },

@@ -23,7 +23,18 @@ sudo dnf update -y
 
 sudo dnf install -y ansible git python3 python3-pip
 
+
+if [ -d ~/Projects/github/dotfiles ]; then
+  echo "Deleting dotfiles..."
+  rm -rf ~/Projects/github/dotfiles
+fi
+
 mkdir -p ~/Projects/github/
 git clone https://github.com/lennox-davidlevy/dotfiles.git -b fedora ~/Projects/github/dotfiles
+
+cd ~/Projects/github/dotfiles
+
+ansible-playbook playbooks/bootstrap.yml
+
 
 kill $SUDO_PID 2>/dev/null || true

@@ -21,6 +21,7 @@ return {
 		auto_install = true,
 		indent = {
 			enable = true,
+			disable = { "yaml" },
 		},
 		highlight = {
 			enable = true,

@@ -25,6 +25,7 @@ local options = {
 	tabstop = 2,
 	softtabstop = 2,
 	shiftwidth = 2,
+	smartindent = true,
 	mouse = "",
   swapfile = false,
 
