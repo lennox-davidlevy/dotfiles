@@ -48,10 +48,10 @@
           block:
             - name: Remove existing nvim config if it exists
               ansible.builtin.file:
-                path: "{{ ansible_env.HOME }}/.config/nvim"
+                path: "/home/david/.config/nvim"
                 state: absent
             - name: Create nvim config symlink
               ansible.builtin.file:
                 src: "{{ playbook_dir }}/../config/nvim"
-                dest: "{{ ansible_user_dir }}/.config/nvim"
+                dest: "/home/david/.config/nvim"
                 state: link
