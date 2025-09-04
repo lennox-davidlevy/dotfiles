@@ -27,6 +27,7 @@ teardown_packages:
     - ansible
     - python3-pip
     - git
+    - perl-Git
 
   editors:
     - neovim
