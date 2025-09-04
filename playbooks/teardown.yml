@@ -30,11 +30,11 @@
 
     - name: Repository Cleanup
       block:
-        - name: Disable COPR repositories
-          community.general.copr:
-            name: "{{ item }}"
-            state: disabled
-          loop: "{{ copr_repositories }}"
+        # - name: Disable COPR repositories
+        #   community.general.copr:
+        #     name: "{{ item }}"
+        #     state: disabled
+        #   loop: "{{ copr_repositories }}"
 
         - name: Autoremove orphaned packages
           ansible.builtin.dnf:
