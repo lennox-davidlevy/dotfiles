@@ -10,22 +10,22 @@
       block:
         - name: Remove desktop packages
           ansible.builtin.dnf:
-            name: "{{ packages.desktop }}"
+            name: "{{ teardown_packages.desktop }}"
             state: absent
 
         - name: Remove development packages
           ansible.builtin.dnf:
-            name: "{{ packages.development }}"
+            name: "{{ teardown_packages.development }}"
             state: absent
 
         - name: Remove editor packages
           ansible.builtin.dnf:
-            name: "{{ packages.editors }}"
+            name: "{{ teardown_packages.editors }}"
             state: absent
 
         - name: Remove safe core packages
           ansible.builtin.dnf:
-            name: "{{ teardown_packages }}"
+            name: "{{ teardown_packages.core }}"
             state: absent
 
     - name: Repository Cleanup
