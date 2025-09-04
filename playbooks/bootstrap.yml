@@ -8,11 +8,6 @@
       ansible.builtin.set_fact:
         actual_user: "{{ ansible_user_id }}"
         actual_user_home: "{{ ansible_user_dir }}"
-    - name: Debug gathered facts
-      ansible.builtin.debug:
-        msg:
-          - "actual_user: {{ actual_user }}"
-          - "actual_user_home: {{ actual_user_home }}"
 
 - name: Bootstrap Fedora Dev Environment
   hosts: localhost
@@ -55,26 +50,18 @@
           ansible.builtin.dnf:
             name: "{{ packages.desktop }}"
             state: present
-    - name: Debug gathered facts in block
-      ansible.builtin.debug:
-        msg:
-          - "actual_user: {{ actual_user }}"
-          - "actual_user_home: {{ actual_user_home }}"
-
-      become: true
-      become_user: "{{ ansible_user_id }}"
     - name: Symlink Config
       become: true
-      become_user: david
+      become_user: "{{ actual_user }}"
       block:
         - name: Symlink neovim config
           block:
             - name: Remove existing nvim config if it exists
               ansible.builtin.file:
-                path: "/home/david/.config/nvim"
+                path: "{{ actual_user_home }}/.config/nvim"
                 state: absent
             - name: Create nvim config symlink
               ansible.builtin.file:
                 src: "{{ playbook_dir }}/../config/nvim"
-                dest: "/home/david/.config/nvim"
+                dest: "{{ actual_user_home }}/.config/nvim"
                 state: link
