@@ -13,10 +13,10 @@
             name: "{{ teardown_packages.desktop }}"
             state: absent
 
-        - name: Remove development packages
-          ansible.builtin.dnf:
-            name: "{{ teardown_packages.development }}"
-            state: absent
+        # - name: Remove development packages
+        #   ansible.builtin.dnf:
+        #     name: "{{ teardown_packages.development }}"
+        #     state: absent
 
         - name: Remove editor packages
           ansible.builtin.dnf:
