@@ -12,19 +12,10 @@ keep_sudo_alive() {
   SUDO_PID=$!
 }
 
-keep_sudo_alive
-
-echo "lets start again cause we be testing..."
-
-# Check if we can use Ansible approach
-if command -v ansible-playbook &>/dev/null && [ -f ~/Projects/github/dotfiles/playbooks/teardown.yml ]; then
-  echo "Using Ansible teardown..."
-  cd ~/Projects/github/dotfiles
-  ansible-playbook playbooks/teardown.yml
-else
-  echo "Ansible not available, using shell teardown..."
+# Shell-based teardown function
+shell_teardown() {
+  echo "Using shell teardown..."
   
-  # Fallback to shell-based removal
   remove_packages() {
     local packages=("$@")
     for package in "${packages[@]}"; do
@@ -48,6 +39,27 @@ else
 
   echo "clean up"
   sudo dnf autoremove -y
+}
+
+keep_sudo_alive
+
+echo "lets start again cause we be testing..."
+
+# Check if we can use Ansible approach
+if command -v ansible-playbook &>/dev/null && [ -d ~/Projects/github/dotfiles ]; then
+  echo "Using Ansible teardown..."
+  cd ~/Projects/github/dotfiles
+  echo "Pulling latest teardown configuration..."
+  git pull origin fedora
+  if [ -f playbooks/teardown.yml ]; then
+    ansible-playbook playbooks/teardown.yml
+  else
+    echo "teardown.yml not found after pull, falling back to shell..."
+    shell_teardown
+  fi
+else
+  echo "Ansible not available, using shell teardown..."
+  shell_teardown
 fi
 
 kill $SUDO_PID 2>/dev/null || true

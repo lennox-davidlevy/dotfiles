@@ -18,6 +18,7 @@ packages:
     - python
 
   desktop:
+    - i3
     - rofi
     - picom
 
