@@ -1,4 +1,19 @@
 ---
+- name: Gather initial facts
+  hosts: localhost
+  gather_facts: true
+  become: false
+  tasks:
+    - name: Store the actual user
+      ansible.builtin.set_fact:
+        actual_user: "{{ ansible_user_id }}"
+        actual_user_home: "{{ ansible_user_dir }}"
+    - name: Debug gathered facts
+      ansible.builtin.debug:
+        msg:
+          - "actual_user: {{ actual_user }}"
+          - "actual_user_home: {{ actual_user_home }}"
+
 - name: Bootstrap Fedora Dev Environment
   hosts: localhost
   become: true
@@ -40,15 +55,12 @@
           ansible.builtin.dnf:
             name: "{{ packages.desktop }}"
             state: present
-    - name: Debug all user-related variables
+    - name: Debug gathered facts in block
       ansible.builtin.debug:
         msg:
-          - "ansible_user_id: {{ ansible_user_id }}"
-          - "ansible_user_dir: {{ ansible_user_dir }}"
-          - "ansible_env.HOME: {{ ansible_env.HOME }}"
-          - "ansible_env.USER: {{ ansible_env.USER }}"
-          - "ansible_real_user_id: {{ ansible_real_user_id | default('not set') }}"
-          - "ansible_become_user: {{ ansible_become_user | default('not set') }}"
+          - "actual_user: {{ actual_user }}"
+          - "actual_user_home: {{ actual_user_home }}"
+
       become: true
       become_user: "{{ ansible_user_id }}"
     - name: Symlink Config

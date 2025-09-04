@@ -30,7 +30,7 @@ if [ -d ~/Projects/github/dotfiles ]; then
 fi
 
 mkdir -p ~/Projects/github/
-git clone https://github.com/lennox-davidlevy/dotfiles.git -b fedora ~/Projects/github/dotfiles
+git clone --depth 1 https://github.com/lennox-davidlevy/dotfiles.git -b fedora ~/Projects/github/dotfiles
 
 cd ~/Projects/github/dotfiles
 
