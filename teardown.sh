@@ -15,7 +15,7 @@ keep_sudo_alive() {
 # Shell-based teardown function
 shell_teardown() {
   echo "Using shell teardown..."
-  
+
   remove_packages() {
     local packages=("$@")
     for package in "${packages[@]}"; do
@@ -53,6 +53,14 @@ if command -v ansible-playbook &>/dev/null && [ -d ~/Projects/github/dotfiles ];
   git pull origin fedora
   if [ -f playbooks/teardown.yml ]; then
     ansible-playbook playbooks/teardown.yml
+    # Reuse the directory cleanup logic from shell_teardown
+    cd ~
+    if [ -d ~/Projects/github/dotfiles ]; then
+      echo "Removing dotfiles directory..."
+      rm -rf ~/Projects/github/dotfiles
+    else
+      echo "Dotfiles directory not found, skipping..."
+    fi
   else
     echo "teardown.yml not found after pull, falling back to shell..."
     shell_teardown

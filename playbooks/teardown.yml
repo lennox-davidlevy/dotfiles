@@ -16,13 +16,9 @@
     - packages.yml
 
   tasks:
-    - name: Directory Cleanup
+    - name: Symlink Cleanup
       block:
-        - name: Remove Projects directory
-          ansible.builtin.file:
-            path: "{{ actual_user_home }}/Projects"
-            state: absent
-        - name: Remove nvim directory
+        - name: Remove nvim symlink
           ansible.builtin.file:
             path: "{{ actual_user_home }}/.config/nvim"
             state: absent
