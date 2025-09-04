@@ -1,4 +1,14 @@
 ---
+- name: Gather initial facts
+  hosts: localhost
+  gather_facts: true
+  become: false
+  tasks:
+    - name: Store the actual user
+      ansible.builtin.set_fact:
+        actual_user: "{{ ansible_user_id }}"
+        actual_user_home: "{{ ansible_user_dir }}"
+
 - name: Teardown Fedora Dev Environment
   hosts: localhost
   become: true
@@ -44,5 +54,9 @@
       block:
         - name: Remove Projects directory
           ansible.builtin.file:
-            path: "{{ ansible_env.HOME }}/Projects"
+            path: "{{ actual_user_home }}/Projects"
+            state: absent
+        - name: Remove nvim directory
+          ansible.builtin.file:
+            path: "{{ actual_user_home }}/.config/nvim"
             state: absent
