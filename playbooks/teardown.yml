@@ -40,6 +40,24 @@
             path: "{{ actual_user_home }}/.oh-my-zsh"
             state: absent
 
+        - name: Remove .local/share/nvim
+          ansible.builtin.file:
+            path: "{{ actual_user_home }}/.local/share/nvim"
+            state: absent
+
+        - name: Remove fonts
+          become: true
+          become_user: "{{ actual_user }}"
+          block:
+            - name: Remove .local/share/fonts
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.local/share/fonts"
+                state: absent
+            - name: Update font cache after removal
+              ansible.builtin.command:
+                cmd: fc-cache -f
+              changed_when: true
+
     - name: Environment Cleanup
       become: true
       block:
