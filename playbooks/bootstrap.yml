@@ -51,54 +51,6 @@
             name: "{{ packages.desktop }}"
             state: present
 
-    - name: Symlink Config
-      become: true
-      become_user: "{{ actual_user }}"
-      block:
-        - name: Symlink neovim config
-          block:
-            - name: Remove existing nvim config if it exists
-              ansible.builtin.file:
-                path: "{{ actual_user_home }}/.config/nvim"
-                state: absent
-            - name: Create nvim config symlink
-              ansible.builtin.file:
-                src: "{{ playbook_dir }}/../config/nvim"
-                dest: "{{ actual_user_home }}/.config/nvim"
-                state: link
-
-        - name: Symlink zsh config
-          block:
-            - name: Remove existing .zshrc.bak
-              ansible.builtin.file:
-                path: "{{ actual_user_home }}/.zshrc.bak"
-                state: absent
-
-            - name: Check if .zshrc exists
-              ansible.builtin.stat:
-                path: "{{ actual_user_home }}/.zshrc"
-              register: zshrc_exists
-
-            - name: Copy .zshrc to .zshrc.bak
-              ansible.builtin.copy:
-                src: "{{ actual_user_home }}/.zshrc"
-                dest: "{{ actual_user_home }}/.zshrc.bak"
-                remote_src: true
-                mode: preserve
-              when: zshrc_exists.stat.exists
-
-            - name: Remove existing .zshrc
-              ansible.builtin.file:
-                path: "{{ actual_user_home }}/.zshrc"
-                state: absent
-              when: zshrc_exists.stat.exists
-
-            - name: Create .zshrc symlink
-              ansible.builtin.file:
-                src: "{{ playbook_dir }}/../shell/.zshrc"
-                dest: "{{ actual_user_home }}/.zshrc"
-                state: link
-
     - name: User environment setup
       become: true
       become_user: "{{ actual_user }}"
@@ -148,3 +100,51 @@
           ansible.builtin.user:
             name: "{{ actual_user }}"
             shell: "{{ zsh_path.stdout }}"
+
+    - name: Symlink Config
+      become: true
+      become_user: "{{ actual_user }}"
+      block:
+        - name: Symlink neovim config
+          block:
+            - name: Remove existing nvim config if it exists
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.config/nvim"
+                state: absent
+            - name: Create nvim config symlink
+              ansible.builtin.file:
+                src: "{{ playbook_dir }}/../config/nvim"
+                dest: "{{ actual_user_home }}/.config/nvim"
+                state: link
+
+        - name: Symlink zsh config
+          block:
+            - name: Remove existing .zshrc.bak
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.zshrc.bak"
+                state: absent
+
+            - name: Check if .zshrc exists
+              ansible.builtin.stat:
+                path: "{{ actual_user_home }}/.zshrc"
+              register: zshrc_exists
+
+            - name: Copy .zshrc to .zshrc.bak
+              ansible.builtin.copy:
+                src: "{{ actual_user_home }}/.zshrc"
+                dest: "{{ actual_user_home }}/.zshrc.bak"
+                remote_src: true
+                mode: preserve
+              when: zshrc_exists.stat.exists
+
+            - name: Remove existing .zshrc
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.zshrc"
+                state: absent
+              when: zshrc_exists.stat.exists
+
+            - name: Create .zshrc symlink
+              ansible.builtin.file:
+                src: "{{ playbook_dir }}/../shell/.zshrc"
+                dest: "{{ actual_user_home }}/.zshrc"
+                state: link
