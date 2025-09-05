@@ -12,6 +12,7 @@ packages:
     - neovim
 
   development:
+    - ansible-lint
     - nodejs
     - golang
     - rust
@@ -33,6 +34,7 @@ teardown_packages:
     - neovim
 
   development:
+    - ansible-lint
     - nodejs
     - golang
     - rust
