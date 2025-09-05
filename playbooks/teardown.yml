@@ -23,6 +23,16 @@
             path: "{{ actual_user_home }}/.config/nvim"
             state: absent
 
+        - name: Remove .zshrc symlink
+          ansible.builtin.file:
+            path: "{{ actual_user_home }}.zshrc"
+            state: absent
+
+        - name: Remove .zshrc.bak
+          ansible.builtin.file:
+            path: "{{ actual_user_home }}.zshrc.bak"
+            state: absent
+
     - name: Environment Cleanup
       become: true
       block:
