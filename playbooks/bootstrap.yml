@@ -99,7 +99,7 @@
                 dest: "{{ actual_user_home }}/.zshrc"
                 state: link
 
-    - name: Install other shell packages
+    - name: User environment setup
       become: true
       become_user: "{{ actual_user }}"
       block:
@@ -107,6 +107,26 @@
           ansible.builtin.shell:
             cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
             creates: "{{ actual_user_home }}/.oh-my-zsh"
+
+        - name: Install custom fonts
+          block:
+            - name: Create fonts directory
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.local/share/fonts/"
+                state: directory
+                mode: "0755"
+
+            - name: Copy font files
+              ansible.builtin.copy:
+                src: "{{ playbook_dir }}/../fonts/"
+                dest: "{{ actual_user_home }}/.local/share/fonts/"
+                mode: "0644"
+                backup: false
+
+            - name: Update font cache
+              ansible.builtin.command:
+                cmd: fc-cache -f
+              changed_when: true
 
     - name: Setup environment
       become: true
