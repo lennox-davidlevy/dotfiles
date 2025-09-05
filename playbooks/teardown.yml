@@ -45,6 +45,11 @@
             path: "{{ actual_user_home }}/.local/share/nvim"
             state: absent
 
+        - name: Remove powerlevel10k
+          ansible.builtin.file:
+            path: "{{ actual_user_home }}/powerlevel10k"
+            state: absent
+
         - name: Remove fonts
           become: true
           become_user: "{{ actual_user }}"

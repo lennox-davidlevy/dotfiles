@@ -108,6 +108,13 @@
             cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
             creates: "{{ actual_user_home }}/.oh-my-zsh"
 
+        - name: Install powerlevel10k
+          ansible.builtin.git:
+            repo: https://github.com/romkatv/powerlevel10k.git
+            dest: "{{ actual_user_home }}/powerlevel10k"
+            depth: 1
+            force: true # noqa latest[git]
+
         - name: Install custom fonts
           block:
             - name: Create fonts directory
