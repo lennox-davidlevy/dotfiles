@@ -33,6 +33,13 @@
             path: "{{ actual_user_home }}.zshrc.bak"
             state: absent
 
+    - name: Directory Cleanup
+      block:
+        - name: Remove oh-my-zsh dir
+          ansible.builtin.file:
+            path: "{{ actual_user_home }}/.oh-my-zsh"
+            state: absent
+
     - name: Environment Cleanup
       become: true
       block:

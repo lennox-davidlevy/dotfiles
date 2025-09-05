@@ -3,8 +3,6 @@ copr_repositories:
 
 packages:
   core:
-    - ansible
-    - git
     - python3
     - python3-pip
     - zsh

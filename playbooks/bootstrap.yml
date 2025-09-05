@@ -99,6 +99,15 @@
                 dest: "{{ actual_user_home }}/.zshrc"
                 state: link
 
+    - name: Install other shell packages
+      become: true
+      become_user: "{{ actual_user }}"
+      block:
+        - name: Install oh my zsh
+          ansible.builtin.shell:
+            cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+            creates: "{{ actual_user_home }}/.oh-my-zsh"
+
     - name: Setup environment
       become: true
       block:
