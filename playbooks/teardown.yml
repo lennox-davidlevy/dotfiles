@@ -23,6 +23,14 @@
             path: "{{ actual_user_home }}/.config/nvim"
             state: absent
 
+    - name: Environment Cleanup
+      become: true
+      block:
+        - name: Reset shell to bash
+          ansible.builtin.user:
+            name: "{{ actual_user }}"
+            shell: /usr/bin/bash
+
     - name: Package Removal
       block:
         - name: Remove desktop packages
