@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Ensure we start from a valid directory
+cd ~
+
 echo "Enter your pw for sudo access..."
 sudo -v
 
