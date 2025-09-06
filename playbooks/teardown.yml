@@ -23,15 +23,39 @@
             path: "{{ actual_user_home }}/.config/nvim"
             state: absent
 
-        - name: Remove .zshrc symlink
+        - name: Remove .zshrc
+          block:
+            - name: Remove .zshrc symlink
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.zshrc"
+                state: absent
+
+            - name: Remove .zshrc.bak
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.zshrc.bak"
+                state: absent
+
+            - name: Remove .zsh_scripts
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.zsh_scripts"
+                state: absent
+
+        - name: Remove .p10k
           ansible.builtin.file:
-            path: "{{ actual_user_home }}.zshrc"
+            path: "{{ actual_user_home }}/.p10k.zsh"
             state: absent
 
-        - name: Remove .zshrc.bak
-          ansible.builtin.file:
-            path: "{{ actual_user_home }}.zshrc.bak"
-            state: absent
+        - name: Remove tmux config
+          block:
+            - name: Remove .tmux.conf
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.tmux.conf"
+                state: absent
+
+            - name: Remove .tmux-themepack
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.tmux-themepack"
+                state: absent
 
     - name: Directory Cleanup
       block:

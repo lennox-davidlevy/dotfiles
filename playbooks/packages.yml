@@ -6,6 +6,7 @@ packages:
     - python3
     - python3-pip
     - zsh
+    - tmux
 
   editors:
     - neovim
@@ -29,6 +30,7 @@ teardown_packages:
     - git
     - perl-Git
     - zsh
+    - tmux
 
   editors:
     - neovim

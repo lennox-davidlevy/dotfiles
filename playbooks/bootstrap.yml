@@ -117,6 +117,43 @@
                 dest: "{{ actual_user_home }}/.config/nvim"
                 state: link
 
+        - name: Symlink .p10k
+          block:
+            - name: Remove existing p10k config if it exists
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.p10k.zsh"
+                state: absent
+
+            - name: Create p10k config symlink
+              ansible.builtin.file:
+                src: "{{ playbook_dir }}/../shell/.p10k.zsh"
+                dest: "{{ actual_user_home }}/.p10k.zsh"
+                state: link
+
+        - name: Symlink .tmux.conf and themes
+          block:
+            - name: Remove existing tmux config if it exists
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.tmux.conf"
+                state: absent
+
+            - name: Create tmux config symlink
+              ansible.builtin.file:
+                src: "{{ playbook_dir }}/../shell/.tmux.conf"
+                dest: "{{ actual_user_home }}/.tmux.conf"
+                state: link
+
+            - name: Remove existing tmux themes if it exists
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.tmux-themepack"
+                state: absent
+
+            - name: Create tmux-themepack symlink
+              ansible.builtin.file:
+                src: "{{ playbook_dir }}/../shell/.tmux-themepack"
+                dest: "{{ actual_user_home }}/.tmux-themepack"
+                state: link
+
         - name: Symlink zsh config
           block:
             - name: Remove existing .zshrc.bak
@@ -147,4 +184,10 @@
               ansible.builtin.file:
                 src: "{{ playbook_dir }}/../shell/.zshrc"
                 dest: "{{ actual_user_home }}/.zshrc"
+                state: link
+
+            - name: Create .zsh_scripts symlink
+              ansible.builtin.file:
+                src: "{{ playbook_dir }}/../shell/.zsh_scripts"
+                dest: "{{ actual_user_home }}/.zsh_scripts"
                 state: link
