@@ -24,7 +24,7 @@ fi
 
 sudo dnf update -y
 
-sudo dnf install -y ansible git
+sudo dnf install -y ansible git python3 python3-pip
 
 
 if [ -d ~/Projects/github/dotfiles ]; then
