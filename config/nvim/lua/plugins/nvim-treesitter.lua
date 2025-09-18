@@ -16,7 +16,9 @@ return {
 			"bash",
 			"markdown",
 			"markdown_inline",
-      "go"
+			"go",
+			"hcl",
+			"terraform"
 		},
 		auto_install = true,
 		indent = {

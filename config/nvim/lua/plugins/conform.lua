@@ -29,6 +29,9 @@ return {
 				zsh = { "shfmt" },
 				sh = { "shfmt" },
 				rust = { "rustfmt" },
+				terraform = { "terraform_fmt" },
+				tf = { "terraform_fmt" },
+				hcl = { "terraform_fmt" },
 			},
 
 			format_on_save = nil,

@@ -26,6 +26,7 @@ return {
 					"rust_analyzer",
 					"tailwindcss",
 					"taplo",
+					"terraformls",
 					"ts_ls",
 					"yamlls",
 				},
@@ -258,6 +259,20 @@ return {
 								hideClosureInitialization = false,
 								hideNamedConstructor = false,
 							},
+						},
+					},
+				},
+			})
+			lspconfig.terraformls.setup({
+				capabilities = capabilities,
+				filetypes = { "terraform", "tf", "hcl" },
+				settings = {
+					terraform = {
+						formatting = {
+							enable = true,
+						},
+						validation = {
+							enable = true,
 						},
 					},
 				},
