@@ -15,11 +15,11 @@ return {
 		lazy = false,
 		priority = 1000,
 	},
-	{
-		"metalelf0/black-metal-theme-neovim",
-		lazy = false,
-		priority = 1000,
-	},
+	-- {
+	-- 	"metalelf0/black-metal-theme-neovim",
+	-- 	lazy = false,
+	-- 	priority = 1000,
+	-- },
 	{
 		"folke/tokyonight.nvim",
 		lazy = false,
