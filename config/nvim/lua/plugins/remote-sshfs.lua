@@ -7,9 +7,9 @@ return {
   keys = {
     { "<leader>rc",  function() require("remote-sshfs.api").connect() end,    desc = "SSH Connect" },
     { "<leader>rd",  function() require("remote-sshfs.api").disconnect() end, desc = "SSH Disconnect" },
-    { "<leader>rse", function() require("remote-sshfs.api").edit() end,       desc = "SSH Edit Config" },
-    { "<leader>rsf", function() require("remote-sshfs.api").find_files() end, desc = "SSH Find Files" },
-    { "<leader>rsg", function() require("remote-sshfs.api").live_grep() end,  desc = "SSH Live Grep" },
+    { "<leader>re", function() require("remote-sshfs.api").edit() end,       desc = "SSH Edit Config" },
+    { "<leader>rf", function() require("remote-sshfs.api").find_files() end, desc = "SSH Find Files" },
+    { "<leader>rg", function() require("remote-sshfs.api").live_grep() end,  desc = "SSH Live Grep" },
   },
   config = function()
     -- Fix the telescope extension bug in unmount_host function
