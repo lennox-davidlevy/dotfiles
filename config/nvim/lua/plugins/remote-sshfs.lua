@@ -12,6 +12,20 @@ return {
     { "<leader>rsg", function() require("remote-sshfs.api").live_grep() end,  desc = "SSH Live Grep" },
   },
   config = function()
+    -- Fix the telescope extension bug in unmount_host function
+    local connections = require("remote-sshfs.connections")
+    local original_unmount = connections.unmount_host
+    connections.unmount_host = function()
+      -- Call original function but safely handle the telescope extension error
+      local success, err = pcall(original_unmount)
+      if not success and string.match(tostring(err), "attempt to index a boolean value") then
+        -- The error happens at the very end after successful unmount, so we're good
+        return
+      elseif not success then
+        error(err)
+      end
+    end
+
     require("remote-sshfs").setup({
       connections = {
         ssh_configs = {
