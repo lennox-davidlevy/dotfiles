@@ -75,3 +75,6 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 
 # === Environment Directories ===
 [ -f ~/.env_directories ] && source ~/.env_directories
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /usr/bin/nomad nomad
