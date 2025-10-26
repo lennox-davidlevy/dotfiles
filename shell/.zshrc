@@ -38,6 +38,7 @@ export PATH="/opt/zig:$PATH"
 
 # === Environment Variables ===
 export EDITOR=nvim
+export SYSTEMD_EDITOR=nvim
 
 # === Python Environment Manager (pyenv) ===
 export PYENV_ROOT="$HOME/.pyenv"
@@ -75,6 +76,9 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 
 # === Environment Directories ===
 [ -f ~/.env_directories ] && source ~/.env_directories
+
+# === Ollama setup ===
+export OLLAMA_MODELS=/mnt/fast-nvme-2t/ollama/models
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/nomad nomad
