@@ -4,7 +4,19 @@ alias kb=kubectl
 alias dk=docker
 alias pd=podman
 alias ic="ibmcloud"
-alias ls="ls --color=auto"
+
+# macOS-compatible ls with colors
+alias ls="ls -G"
+# Or use modern eza if installed
+if command -v eza &> /dev/null; then
+  alias ls="eza --icons"
+  alias ll="eza -lah --icons"
+  alias la="eza -a --icons"
+  alias lt="eza --tree --icons"
+else
+  alias ll="ls -lah"
+  alias la="ls -a"
+fi
 
 # Docker
 alias dia="docker image ls | bat"

@@ -25,16 +25,26 @@ unsetopt beep extendedglob
 bindkey -v
 
 # === Completion System ===
-zstyle :compinstall filename '/home/david/.zshrc'
+zstyle :compinstall filename "$HOME/.zshrc"
 autoload -Uz compinit
 compinit
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
 # === PATH Configuration ===
+# Detect architecture and set Homebrew path
+if [[ "$(uname -m)" == "arm64" ]]; then
+  export BREW_PREFIX="/opt/homebrew"
+else
+  export BREW_PREFIX="/usr/local"
+fi
+
+# Add Homebrew to PATH
+eval "$($BREW_PREFIX/bin/brew shellenv)"
+
+# User binaries
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="/home/david/bin:$PATH"
-export PATH="/home/david/.opencode/bin:$PATH"
-export PATH="/opt/zig:$PATH"
+export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/.opencode/bin:$PATH"
 
 # === Environment Variables ===
 export EDITOR=nvim
@@ -48,9 +58,9 @@ if [[ -d $PYENV_ROOT/bin ]]; then
 fi
 
 # === Node Version Manager (fnm) ===
-FNM_PATH="/home/david/.local/share/fnm"
+FNM_PATH="$HOME/.local/share/fnm"
 if [ -d "$FNM_PATH" ]; then
-  export PATH="/home/david/.local/share/fnm:$PATH"
+  export PATH="$FNM_PATH:$PATH"
   eval "$(fnm env --use-on-cd --shell zsh)"
   eval "$(fnm completions --shell zsh)"
 fi
@@ -58,7 +68,7 @@ fi
 # === Bun ===
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
-[ -s "/home/david/.bun/_bun" ] && source "/home/david/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # === Go ===
 if [[ -d /usr/local/go/bin ]]; then
@@ -78,7 +88,23 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 [ -f ~/.env_directories ] && source ~/.env_directories
 
 # === Ollama setup ===
-export OLLAMA_MODELS=/mnt/fast-nvme-2t/ollama/models
+# macOS default location (customize as needed)
+# export OLLAMA_MODELS="$HOME/.ollama/models"
+
+# === Additional Tools ===
+# UV (Python package installer)
+if command -v uv &> /dev/null; then
+  eval "$(uv generate-shell-completion zsh)"
+fi
+
+# Zoxide (smarter cd)
+if command -v zoxide &> /dev/null; then
+  eval "$(zoxide init zsh)"
+fi
+
+# FZF (fuzzy finder)
+if command -v fzf &> /dev/null; then
+  eval "$(fzf --zsh)"
+fi
 
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/bin/nomad nomad

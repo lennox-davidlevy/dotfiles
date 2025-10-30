@@ -1,0 +1,84 @@
+---
+# macOS Homebrew package definitions
+
+homebrew_taps:
+  - homebrew/cask-fonts
+
+packages:
+  core:
+    - python@3.12
+    - zsh
+    - tmux
+    - git
+    - curl
+    - wget
+
+  editors:
+    - neovim
+
+  development:
+    - ansible-lint
+    - node
+    - go
+    - rust
+    - uv          # Fast Python package installer
+    - pyenv       # Python version management
+    - fnm         # Fast Node.js version manager
+    - ripgrep     # Better grep
+    - fd          # Better find
+    - bat         # Better cat
+    - eza         # Better ls
+    - jq          # JSON processor
+    - yq          # YAML processor
+    - tree        # Directory tree viewer
+    - htop        # Process viewer
+
+  tools:
+    - fzf         # Fuzzy finder
+    - zoxide      # Smarter cd
+    - tldr        # Simplified man pages
+    - gh          # GitHub CLI
+
+casks:
+  terminal:
+    - ghostty     # Terminal emulator
+    - font-meslo-lg-nerd-font
+    - font-jetbrains-mono-nerd-font
+
+  productivity:
+    - raycast     # Spotlight replacement (free)
+    - rectangle   # Window management (simple)
+    - stats       # System monitor
+    
+  browsers:
+    - brave-browser
+
+  optional:
+    - karabiner-elements  # Keyboard customization
+    - 1password          # Password manager
+    - docker             # Containerization
+    - visual-studio-code # Editor
+
+# Packages to remove during teardown
+teardown_packages:
+  core:
+    - ansible
+    - git
+    - zsh
+    - tmux
+
+  editors:
+    - neovim
+
+  development:
+    - ansible-lint
+    - node
+    - go
+    - rust
+    - uv
+    - pyenv
+    - fnm
+
+teardown_casks:
+  - font-meslo-lg-nerd-font
+  - font-jetbrains-mono-nerd-font

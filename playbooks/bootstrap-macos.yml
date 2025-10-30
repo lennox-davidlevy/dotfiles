@@ -1,0 +1,278 @@
+---
+- name: Gather initial facts
+  hosts: localhost
+  gather_facts: true
+  become: false
+  tasks:
+    - name: Store the actual user
+      ansible.builtin.set_fact:
+        actual_user: "{{ ansible_user_id }}"
+        actual_user_home: "{{ ansible_user_dir }}"
+
+    - name: Detect architecture
+      ansible.builtin.set_fact:
+        is_apple_silicon: "{{ ansible_machine == 'arm64' }}"
+        brew_prefix: "{{ '/opt/homebrew' if ansible_machine == 'arm64' else '/usr/local' }}"
+
+    - name: Display system info
+      ansible.builtin.debug:
+        msg: "Configuring macOS for {{ actual_user }} on {{ ansible_machine }} (Homebrew: {{ brew_prefix }})"
+
+- name: Bootstrap macOS Dev Environment
+  hosts: localhost
+  become: false
+  vars_files:
+    - packages-macos.yml
+  tasks:
+    - name: Homebrew setup
+      block:
+        - name: Add Homebrew taps
+          community.general.homebrew_tap:
+            name: "{{ item }}"
+            state: present
+          loop: "{{ homebrew_taps }}"
+
+        - name: Update Homebrew
+          community.general.homebrew:
+            update_homebrew: true
+
+    - name: Package Installation
+      block:
+        - name: Install core packages
+          community.general.homebrew:
+            name: "{{ packages.core }}"
+            state: present
+
+        - name: Install editor packages
+          community.general.homebrew:
+            name: "{{ packages.editors }}"
+            state: present
+
+        - name: Install development packages
+          community.general.homebrew:
+            name: "{{ packages.development }}"
+            state: present
+
+        - name: Install tool packages
+          community.general.homebrew:
+            name: "{{ packages.tools }}"
+            state: present
+
+    - name: Cask Installation
+      block:
+        - name: Install terminal casks
+          community.general.homebrew_cask:
+            name: "{{ casks.terminal }}"
+            state: present
+          ignore_errors: true  # Some fonts might already be installed
+
+        - name: Install productivity casks
+          community.general.homebrew_cask:
+            name: "{{ casks.productivity }}"
+            state: present
+          ignore_errors: true
+
+        - name: Install browser casks
+          community.general.homebrew_cask:
+            name: "{{ casks.browsers }}"
+            state: present
+          ignore_errors: true
+
+    - name: User environment setup
+      block:
+        - name: Check if Oh My Zsh is installed
+          ansible.builtin.stat:
+            path: "{{ actual_user_home }}/.oh-my-zsh"
+          register: ohmyzsh_stat
+
+        - name: Install Oh My Zsh
+          ansible.builtin.shell:
+            cmd: sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+          when: not ohmyzsh_stat.stat.exists
+          changed_when: true
+
+        - name: Install Powerlevel10k
+          ansible.builtin.git:
+            repo: https://github.com/romkatv/powerlevel10k.git
+            dest: "{{ actual_user_home }}/powerlevel10k"
+            depth: 1
+            force: true
+
+        - name: Install custom fonts
+          block:
+            - name: Create fonts directory
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/Library/Fonts/"
+                state: directory
+                mode: "0755"
+
+            - name: Copy font files
+              ansible.builtin.copy:
+                src: "{{ playbook_dir }}/../fonts/"
+                dest: "{{ actual_user_home }}/Library/Fonts/"
+                mode: "0644"
+                backup: false
+
+    - name: Setup environment
+      block:
+        - name: Get zsh path
+          ansible.builtin.command: which zsh
+          register: zsh_path
+          changed_when: false
+
+        - name: Check current shell
+          ansible.builtin.command: dscl . -read /Users/{{ actual_user }} UserShell
+          register: current_shell
+          changed_when: false
+
+        - name: Change user's shell to zsh
+          become: true
+          ansible.builtin.command: chsh -s {{ zsh_path.stdout }} {{ actual_user }}
+          when: zsh_path.stdout not in current_shell.stdout
+          changed_when: true
+
+    - name: Symlink Config
+      block:
+        - name: Symlink neovim config
+          block:
+            - name: Remove existing nvim config if it exists
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.config/nvim"
+                state: absent
+
+            - name: Create nvim config symlink
+              ansible.builtin.file:
+                src: "{{ playbook_dir }}/../config/nvim"
+                dest: "{{ actual_user_home }}/.config/nvim"
+                state: link
+
+        - name: Symlink .p10k
+          block:
+            - name: Remove existing p10k config if it exists
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.p10k.zsh"
+                state: absent
+
+            - name: Create p10k config symlink
+              ansible.builtin.file:
+                src: "{{ playbook_dir }}/../shell/.p10k.zsh"
+                dest: "{{ actual_user_home }}/.p10k.zsh"
+                state: link
+
+        - name: Symlink .tmux.conf and themes
+          block:
+            - name: Remove existing tmux config if it exists
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.tmux.conf"
+                state: absent
+
+            - name: Create tmux config symlink
+              ansible.builtin.file:
+                src: "{{ playbook_dir }}/../shell/.tmux.conf"
+                dest: "{{ actual_user_home }}/.tmux.conf"
+                state: link
+
+            - name: Remove existing tmux themes if it exists
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.tmux-themepack"
+                state: absent
+
+            - name: Create tmux-themepack symlink
+              ansible.builtin.file:
+                src: "{{ playbook_dir }}/../shell/.tmux-themepack"
+                dest: "{{ actual_user_home }}/.tmux-themepack"
+                state: link
+
+        - name: Symlink zsh config
+          block:
+            - name: Remove existing .zshrc.bak
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.zshrc.bak"
+                state: absent
+
+            - name: Check if .zshrc exists
+              ansible.builtin.stat:
+                path: "{{ actual_user_home }}/.zshrc"
+              register: zshrc_exists
+
+            - name: Copy .zshrc to .zshrc.bak
+              ansible.builtin.copy:
+                src: "{{ actual_user_home }}/.zshrc"
+                dest: "{{ actual_user_home }}/.zshrc.bak"
+                remote_src: true
+                mode: preserve
+              when: zshrc_exists.stat.exists
+
+            - name: Remove existing .zshrc
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.zshrc"
+                state: absent
+              when: zshrc_exists.stat.exists
+
+            - name: Create .zshrc symlink
+              ansible.builtin.file:
+                src: "{{ playbook_dir }}/../shell/.zshrc"
+                dest: "{{ actual_user_home }}/.zshrc"
+                state: link
+
+            - name: Remove existing .zsh_scripts if it exists
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.zsh_scripts"
+                state: absent
+
+            - name: Create .zsh_scripts symlink
+              ansible.builtin.file:
+                src: "{{ playbook_dir }}/../shell/.zsh_scripts"
+                dest: "{{ actual_user_home }}/.zsh_scripts"
+                state: link
+
+    - name: Initialize development tools
+      block:
+        - name: Install latest Python with pyenv
+          ansible.builtin.shell:
+            cmd: |
+              eval "$({{ brew_prefix }}/bin/brew shellenv)"
+              export PYENV_ROOT="$HOME/.pyenv"
+              export PATH="$PYENV_ROOT/bin:$PATH"
+              eval "$(pyenv init -)"
+              pyenv install 3.12:latest --skip-existing
+              pyenv global $(pyenv versions --bare | grep "^3.12" | tail -1)
+          args:
+            executable: /bin/zsh
+          changed_when: true
+          ignore_errors: true
+
+        - name: Install latest LTS Node with fnm
+          ansible.builtin.shell:
+            cmd: |
+              eval "$({{ brew_prefix }}/bin/brew shellenv)"
+              eval "$(fnm env --use-on-cd)"
+              fnm install --lts
+              fnm default lts-latest
+          args:
+            executable: /bin/zsh
+          changed_when: true
+          ignore_errors: true
+
+    - name: Final message
+      ansible.builtin.debug:
+        msg: |
+          ========================================
+          macOS Bootstrap Complete!
+          ========================================
+          
+          Architecture: {{ ansible_machine }}
+          Homebrew prefix: {{ brew_prefix }}
+          
+          Next steps:
+          1. Restart your terminal or run: exec zsh
+          2. Verify installations: nvim --version, python --version, node --version
+          3. Install window manager manually if desired
+          
+          Tools installed:
+          - Python version manager: pyenv
+          - Node version manager: fnm
+          - Python package manager: uv
+          - Modern CLI tools: ripgrep, fd, bat, eza, fzf, zoxide
+          
+          Have fun!
