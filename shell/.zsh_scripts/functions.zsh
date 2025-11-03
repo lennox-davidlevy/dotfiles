@@ -138,9 +138,8 @@ ngrokpb() {
     curl -s http://127.0.0.1:4040/api/tunnels |
       jq -r '.tunnels[0].public_url' |
       tr -d '\n' |
-      xclip -selection clipboard
-      
-    echo "Copied: $(xclip -o -selection clipboard)"
+      pbcopy
+    echo "Copied: $(pbpaste)"
   ) &
 
   ngrok http "${1:-8000}"
@@ -168,8 +167,8 @@ remote-open() {
   url=${url%.git}
 
   echo "Opening: $url"
-  # open "$url" # macOS
-  xdg-open "$url"
+  open "$url" # macOS
+  # Use 'xdg-open "$url"' for Linux
 }
 
 remote-copy() {
@@ -188,14 +187,14 @@ remote-copy() {
   fi
 
   echo "Copying: $url"
-  printf '%s' "$url" | xclip -selection clipboard
+  printf '%s' "$url" | pbcopy
 }
 
 # Open remote repo from cli
 fast-docs() {
   PORT="${1:-${FASTAPI_PORT:-8000}}"
   URL="http://127.0.0.1:${PORT}/docs"
-  xdg-open "$URL"
+  open "$URL"
 }
 
 # File preview with fzf and bat
