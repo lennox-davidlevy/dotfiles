@@ -19,16 +19,13 @@ setopt HIST_IGNORE_SPACE
 setopt HIST_VERIFY
 setopt SHARE_HISTORY
 
-# Options
+# === Options ===
 setopt autocd
 unsetopt beep extendedglob
 bindkey -v
 
-# === Completion System ===
-zstyle :compinstall filename "$HOME/.zshrc"
-autoload -Uz compinit
-compinit
-zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+# === Autocomplete ===
+autoload -Uz compinit && compinit -C
 
 # === PATH Configuration ===
 # Detect architecture and set Homebrew path
@@ -58,9 +55,13 @@ if [[ -d $PYENV_ROOT/bin ]]; then
 fi
 
 # === Node Version Manager (fnm) ===
-FNM_PATH="$HOME/.local/share/fnm"
-if [ -d "$FNM_PATH" ]; then
-  export PATH="$FNM_PATH:$PATH"
+# FNM_PATH="$HOME/.local/share/fnm"
+# if [ -d "$FNM_PATH" ]; then
+#   export PATH="$FNM_PATH:$PATH"
+#   eval "$(fnm env --use-on-cd --shell zsh)"
+#   eval "$(fnm completions --shell zsh)"
+# fi
+if command -v fnm &> /dev/null; then
   eval "$(fnm env --use-on-cd --shell zsh)"
   eval "$(fnm completions --shell zsh)"
 fi

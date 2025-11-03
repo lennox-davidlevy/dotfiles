@@ -5,18 +5,32 @@ alias dk=docker
 alias pd=podman
 alias ic="ibmcloud"
 
-# macOS-compatible ls with colors
-alias ls="ls -G"
-# Or use modern eza if installed
+unalias ls ll la lt lsa 2>/dev/null
+
+# Modern eza if installed, otherwise fallback to standard ls
 if command -v eza &> /dev/null; then
-  alias ls="eza --icons"
-  alias ll="eza -lah --icons"
-  alias la="eza -a --icons"
-  alias lt="eza --tree --icons"
+  ls() { eza --icons "$@" }
+  ll() { eza -lah --icons "$@" }
+  la() { eza -a --icons "$@" }
+  lt() { eza --tree --icons "$@" }
 else
+  alias ls="ls -G"  # macOS-compatible ls with colors
   alias ll="ls -lah"
   alias la="ls -a"
 fi
+
+# macOS-compatible ls with colors
+# alias ls="ls -G"
+# Or use modern eza if installed
+# if command -v eza &> /dev/null; then
+#   alias ls="eza --icons"
+#   alias ll="eza -lah --icons"
+#   alias la="eza -a --icons"
+#   alias lt="eza --tree --icons"
+# else
+#   alias ll="ls -lah"
+#   alias la="ls -a"
+# fi
 
 # Docker
 alias dia="docker image ls | bat"
