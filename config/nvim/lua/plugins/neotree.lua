@@ -68,8 +68,12 @@ return {
 			},
 		})
 
-		-- Set brighter directory colors
-		vim.api.nvim_set_hl(0, "NeoTreeDirectoryName", { fg = "#56B6C2" })
-		vim.api.nvim_set_hl(0, "NeoTreeDirectoryIcon", { fg = "#56B6C2" })
+		-- Set brighter directory colors after colorscheme changes
+		vim.api.nvim_create_autocmd("ColorScheme", {
+			callback = function()
+				vim.api.nvim_set_hl(0, "NeoTreeDirectoryName", { fg = "#56B6C2" })
+				vim.api.nvim_set_hl(0, "NeoTreeDirectoryIcon", { fg = "#56B6C2" })
+			end,
+		})
 	end,
 }

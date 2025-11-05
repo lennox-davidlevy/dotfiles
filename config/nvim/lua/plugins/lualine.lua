@@ -6,7 +6,7 @@ return {
 		local lualine = require("lualine")
 		lualine.setup({
 			options = {
-				theme = "tokyonight",
+				theme = "gruvbox",
 			},
 			extensions = {
 				"neo-tree",

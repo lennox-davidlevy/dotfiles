@@ -25,8 +25,8 @@ require("lazy").setup("plugins", {
 
 -- Colorscheme setup
 local my_colorscheme =
-"everforest"                        -- options: "gruvbox-material", "gruvbox", "ayu", "bathory", "habamax", "taake", "yugen", "ashen", "everforest"
-local my_background = "dark"        -- options: "dark", "light"
+"gruvbox-material"                 -- options: "gruvbox-material", "gruvbox", "ayu", "bathory", "habamax", "taake", "yugen", "ashen", "everforest"
+local my_background = "dark" -- options: "dark", "light"
 
 local function set_colorscheme(scheme, background)
   local success, _ = pcall(vim.cmd.colorscheme, scheme)
