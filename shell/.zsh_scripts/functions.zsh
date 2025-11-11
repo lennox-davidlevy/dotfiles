@@ -173,7 +173,9 @@ remote-open() {
 
 remote-copy() {
   local remote=${1:-origin}
+  local use_ssh=${2:-false}
   local url
+  local original_url
 
   url=$(git remote get-url "$remote" 2>/dev/null) || {
     echo "Error: Remote '$remote' not found" >&2
@@ -182,8 +184,18 @@ remote-copy() {
     return 1
   }
 
-  if [[ $url =~ ^git@([^:]+):(.+)\.git$ ]]; then
-    url="https://${match[1]}/${match[2]}.git"
+  original_url="$url"
+
+  if [[ $use_ssh == "true" ]]; then
+    if [[ $url =~ ^https://([^/]+)/(.+)\.git$ ]]; then
+      url="git@${match[1]}:${match[2]}.git"
+    elif [[ $url =~ ^https://([^/]+)/(.+)$ ]]; then
+      url="git@${match[1]}:${match[2]}"
+    fi
+  else
+    if [[ $url =~ ^git@([^:]+):(.+)\.git$ ]]; then
+      url="https://${match[1]}/${match[2]}.git"
+    fi
   fi
 
   echo "Copying: $url"

@@ -8,7 +8,10 @@ return {
 
 		local sources = {
 			-- === Diagnostics ===
-			null_ls.builtins.diagnostics.dotenv_linter,
+			null_ls.builtins.diagnostics.dotenv_linter.with({
+				command = "dotenv-linter",
+				args = { "check", "$FILENAME" },
+			}),
 			null_ls.builtins.diagnostics.ansiblelint,
 			require("none-ls.diagnostics.ruff"),
 		}
