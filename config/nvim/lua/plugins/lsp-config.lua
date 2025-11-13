@@ -23,7 +23,6 @@ return {
                     "jsonls",
                     "lua_ls",
                     "marksman",
-                    "prettierd",
                     "ruff",
                     "rust_analyzer",
                     "tailwindcss",
@@ -131,6 +130,8 @@ return {
 
                             diagnosticSeverityOverrides = {
                                 reportUnusedImport = "none",
+                                reportMissingParameterType = "none",
+                                reportCallIssue = false,
                             },
                         },
                     },
