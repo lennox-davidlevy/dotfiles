@@ -7,7 +7,7 @@
 - Check syntax: `luacheck lua/` (if available)
 
 ## Code Style Guidelines
-- **Indentation**: 2 spaces, expandtab=true (set in options.lua:24-26)
+- **Indentation**: 4 spaces, expandtab=true (set in options.lua:24-26)
 - **Variables**: snake_case, always use `local` to avoid globals
 - **Strings**: Double quotes consistently
 - **Comments**: `-- comment` for single line only
