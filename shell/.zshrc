@@ -82,3 +82,5 @@ export OLLAMA_MODELS=/mnt/fast-nvme-2t/ollama/models
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/bin/nomad nomad
+
+fpath+=~/.zfunc; autoload -Uz compinit; compinit

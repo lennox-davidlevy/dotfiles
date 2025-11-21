@@ -154,6 +154,7 @@ assign [class="Brave-browser"] workspace number $ws2
 assign [class="obs"] workspace number $ws3
 assign [class="steam"] workspace number $ws4
 assign [class="org.gnome.Nautilus"] workspace number $ws5
+assign [class="Antigravity"] workspace number $ws5
 assign [class="1Password"] workspace number $ws5
 assign [class="Slack"] workspace number $ws6
 assign [class="Spotify"] workspace number $ws7
