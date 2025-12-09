@@ -222,3 +222,9 @@ fp() {
     nvim "$file"
   fi
 }
+
+# Start colima with settings for orchestrate
+function colima-orchestrate() {
+  echo "Starting Colima with optimized settings for orchestrate..."
+  colima start --cpu-type host --arch host --vm-type=vz --mount-type virtiofs -c 8 -m 16 "$@"
+}

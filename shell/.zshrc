@@ -109,3 +109,6 @@ if command -v fzf &> /dev/null; then
 fi
 
 autoload -U +X bashcompinit && bashcompinit
+
+# Added by Antigravity
+export PATH="/Users/davidlevy/.antigravity/antigravity/bin:$PATH"
