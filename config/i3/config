@@ -126,7 +126,7 @@ bindsym $mod+a focus parent
 # We use variables to avoid repeating the names in multiple places.
 set $ws1 "1:Terminal"
 set $ws2 "2:Browser"
-set $ws3 "3:OBS"
+set $ws3 "3:Apps"
 set $ws4 "4:Steam"
 set $ws5 "5:System"
 set $ws6 "6:Slack"
@@ -152,13 +152,16 @@ bindsym Mod1+0 workspace number $ws10
 assign [class="com.mitchellh.ghostty"] workspace number $ws1
 assign [class="Brave-browser"] workspace number $ws2
 assign [class="obs"] workspace number $ws3
+assign [class="Gimp"] workspace number $ws3
 assign [class="steam"] workspace number $ws4
 assign [class="org.gnome.Nautilus"] workspace number $ws5
 assign [class="Antigravity"] workspace number $ws5
+assign [class="REAPER"] workspace number $ws5
 assign [class="1Password"] workspace number $ws5
 assign [class="Slack"] workspace number $ws6
 assign [class="Spotify"] workspace number $ws7
 assign [class="Virt-manager"] workspace number $ws8
+assign [class="pavucontrol"] workspace number $ws8
 assign [class="Org.gnome.Boxes"] workspace number $ws8
 assign [class="VirtualBox Manager"] workspace number $ws8
 assign [class="VirtualBox Machine"] workspace number $ws8
