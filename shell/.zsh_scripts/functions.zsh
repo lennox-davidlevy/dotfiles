@@ -228,3 +228,35 @@ function colima-orchestrate() {
   echo "Starting Colima with optimized settings for orchestrate..."
   colima start --cpu-type host --arch host --vm-type=vz --mount-type virtiofs -c 8 -m 16 "$@"
 }
+
+# Create a new project with standard directory structure
+function newproject {
+  if [ -z "$1" ]; then
+    echo "Usage: newproject <project_name>"
+    return 1
+  fi
+
+  local project_name=$1
+  local project_path="./${project_name}"
+
+  if [ -d "$project_path" ]; then
+    echo "Error: Project '${project_name}' already exists at ${project_path}"
+    return 1
+  fi
+
+  echo "Creating project '${project_name}'..."
+  mkdir -p "${project_path}"/{notes,videos,docs,presentations}
+
+  if [ $? -eq 0 ]; then
+    echo "Project '${project_name}' created successfully!"
+    echo "  ${project_path}/notes/"
+    echo "  ${project_path}/videos/"
+    echo "  ${project_path}/docs/"
+    echo "  ${project_path}/presentations/"
+    echo ""
+    echo "To navigate: cd ${project_name}"
+  else
+    echo "Failed to create project '${project_name}'."
+    return 1
+  fi
+}
