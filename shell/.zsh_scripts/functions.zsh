@@ -260,3 +260,13 @@ function newproject {
     return 1
   fi
 }
+
+# Sign in and set secret environment values
+function sign-in() {
+  if command -v op &> /dev/null; then
+    export BOBSHELL_API_KEY=$(op read "op://Private/Project Bob API key/credential" 2>/dev/null)
+    echo "Signed in and BOBSHELL_API_KEY set."
+  else
+    echo "op command not found."
+  fi
+}
