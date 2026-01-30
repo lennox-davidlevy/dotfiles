@@ -58,37 +58,37 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 -- Custom color scheme highlights
-local colors_group = vim.api.nvim_create_augroup("BetterColors", { clear = true })
-
-vim.api.nvim_create_autocmd("ColorScheme", {
-    group = colors_group,
-    pattern = "*",
-    callback = function()
-        vim.cmd("hi! link DiagnosticSignError Normal")
-        vim.cmd("hi DiagnosticSignError gui=bold guifg=#ff2800")
-        vim.cmd("hi! link DiagnosticSignWarn Normal")
-        vim.cmd("hi DiagnosticSignWarn guifg=#ff2800")
-        vim.cmd("hi! link DiagnosticSignHint Normal")
-        vim.cmd("hi DiagnosticSignHint guifg=#FBFBFB")
-        vim.cmd("hi! link DiagnosticSignInfo Normal")
-        vim.cmd("hi DiagnosticSignInfo guifg=#FBFBFB")
-        vim.cmd("hi! link GitGutterAdd Normal")
-        vim.cmd("hi GitGutterAdd guifg=#ffb000")
-        vim.cmd("hi! link GitGutterChange Normal")
-        vim.cmd("hi GitGutterChange guifg=#ffb000")
-        vim.cmd("hi! link GitGutterDelete Normal")
-        vim.cmd("hi GitGutterDelete guifg=#ffb000")
-        vim.cmd("hi! link GitGutterChangeDelete Normal")
-        vim.cmd("hi GitGutterChangeDelete guifg=#ffb000")
-        vim.cmd("hi MatchParen guibg=NONE guifg=#FFFF00 gui=bold")
-        vim.cmd("hi Visual guibg=#000000 guifg=#ffb000")
-        vim.cmd("hi Search guifg=#FFFF00 guibg=NONE")
-        vim.cmd("hi IncSearch guifg=#FFFF00 guibg=NONE gui=bold")
-        vim.cmd("hi TelescopeSelection guibg=#000000 guifg=#ffb000")
-        vim.cmd("hi TelescopeSelectionCaret guibg=#000000 guifg=#ffb000")
-        vim.cmd("hi TelescopeMultiSelection guibg=#000000 guifg=#ffb000")
-    end,
-})
+-- local colors_group = vim.api.nvim_create_augroup("BetterColors", { clear = true })
+--
+-- vim.api.nvim_create_autocmd("ColorScheme", {
+--     group = colors_group,
+--     pattern = "*",
+--     callback = function()
+--         vim.cmd("hi! link DiagnosticSignError Normal")
+--         vim.cmd("hi DiagnosticSignError gui=bold guifg=#ff2800")
+--         vim.cmd("hi! link DiagnosticSignWarn Normal")
+--         vim.cmd("hi DiagnosticSignWarn guifg=#ff2800")
+--         vim.cmd("hi! link DiagnosticSignHint Normal")
+--         vim.cmd("hi DiagnosticSignHint guifg=#FBFBFB")
+--         vim.cmd("hi! link DiagnosticSignInfo Normal")
+--         vim.cmd("hi DiagnosticSignInfo guifg=#FBFBFB")
+--         vim.cmd("hi! link GitGutterAdd Normal")
+--         vim.cmd("hi GitGutterAdd guifg=#ffb000")
+--         vim.cmd("hi! link GitGutterChange Normal")
+--         vim.cmd("hi GitGutterChange guifg=#ffb000")
+--         vim.cmd("hi! link GitGutterDelete Normal")
+--         vim.cmd("hi GitGutterDelete guifg=#ffb000")
+--         vim.cmd("hi! link GitGutterChangeDelete Normal")
+--         vim.cmd("hi GitGutterChangeDelete guifg=#ffb000")
+--         vim.cmd("hi MatchParen guibg=NONE guifg=#FFFF00 gui=bold")
+--         vim.cmd("hi Visual guibg=#000000 guifg=#ffb000")
+--         vim.cmd("hi Search guifg=#FFFF00 guibg=NONE")
+--         vim.cmd("hi IncSearch guifg=#FFFF00 guibg=NONE gui=bold")
+--         vim.cmd("hi TelescopeSelection guibg=#000000 guifg=#ffb000")
+--         vim.cmd("hi TelescopeSelectionCaret guibg=#000000 guifg=#ffb000")
+--         vim.cmd("hi TelescopeMultiSelection guibg=#000000 guifg=#ffb000")
+--     end,
+-- })
 
 -- Auto resize windows on terminal resize
 local resize_group = vim.api.nvim_create_augroup("AutoResize", { clear = true })

@@ -15,6 +15,11 @@ return {
         lazy = false,
         priority = 1000,
     },
+    {
+        "xero/miasma.nvim",
+        lazy = false,
+        priority = 1000,
+    },
     -- {
     -- 	"metalelf0/black-metal-theme-neovim",
     -- 	lazy = false,
