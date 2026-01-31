@@ -25,12 +25,11 @@ font pango:monospace 8
 # https://wiki.archlinux.org/index.php/XDG_Autostart
 exec --no-startup-id dex --autostart --environment i3
 
-# The combination of xss-lock, nm-applet and pactl is a popular choice, so
-# they are included here as an example. Modify as you see fit.
-
-# xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
-# screen before suspend. Use loginctl lock-session to lock your screen.
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+# Screen saver and lock configuration using xscreensaver
+# xscreensaver manages DPMS internally via ~/.xscreensaver config
+# After n min idle: Abstractile screensaver activates + locks immediately
+# Monitors never turn off (dpmsEnabled: False in ~/.xscreensaver)
+exec --no-startup-id xscreensaver -no-splash
 # NetworkManager is the most popular way to manage wireless networks on Linux,
 # and nm-applet is a desktop environment-independent system tray GUI for it.
 exec --no-startup-id nm-applet
@@ -158,6 +157,7 @@ assign [class="org.gnome.Nautilus"] workspace number $ws5
 assign [class="Antigravity"] workspace number $ws5
 assign [class="REAPER"] workspace number $ws5
 assign [class="1Password"] workspace number $ws5
+assign [class="Xscreensaver-settings"] workspace number $ws5
 assign [class="Slack"] workspace number $ws6
 assign [class="Spotify"] workspace number $ws7
 assign [class="Audacious"] workspace number $ws7
