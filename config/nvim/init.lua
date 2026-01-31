@@ -25,7 +25,7 @@ require("lazy").setup("plugins", {
 
 -- Colorscheme setup
 local my_colorscheme =
-"everforest"                        -- options: "gruvbox-material", "gruvbox", "ayu", "bathory", "habamax", "taake", "yugen", "ashen", "everforest"
+"miasma"                        -- options: "gruvbox-material", "gruvbox", "ayu", "bathory", "habamax", "taake", "yugen", "ashen", "everforest", "miasma"
 local my_background = "dark"        -- options: "dark", "light"
 
 local function set_colorscheme(scheme, background)

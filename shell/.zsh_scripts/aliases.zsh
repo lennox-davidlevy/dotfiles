@@ -5,6 +5,7 @@ alias dk=docker
 alias pd=podman
 alias ic="ibmcloud"
 alias ls="ls --color=auto"
+alias open="xdg-open"
 
 # Docker
 alias dia="docker image ls | bat"

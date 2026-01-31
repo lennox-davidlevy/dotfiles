@@ -98,7 +98,8 @@ case ${chosen} in
 		if [[ -x '/usr/bin/betterlockscreen' ]]; then
 			betterlockscreen -l
 		elif [[ -x '/usr/bin/i3lock' ]]; then
-			i3lock
+			# i3lock
+      i3lock -i /home/david/Pictures/wallpapers/lockscreen_dual.png
 		fi
         ;;
     $suspend)
