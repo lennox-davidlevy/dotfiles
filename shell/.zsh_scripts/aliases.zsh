@@ -44,7 +44,7 @@ alias dre="docker rm"
 alias dire="docker image rm"
 alias dsp="docker system prune"
 
-alias docker-compose="docker compose"
+# alias docker-compose="docker compose"
 
 alias pia="podman image ls | bat"
 

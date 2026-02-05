@@ -245,7 +245,7 @@ function newproject {
   fi
 
   echo "Creating project '${project_name}'..."
-  mkdir -p "${project_path}"/{notes,videos,docs,presentations}
+  mkdir -p "${project_path}"/{notes,videos,docs,presentations,projects}
 
   if [ $? -eq 0 ]; then
     echo "Project '${project_name}' created successfully!"
@@ -253,6 +253,7 @@ function newproject {
     echo "  ${project_path}/videos/"
     echo "  ${project_path}/docs/"
     echo "  ${project_path}/presentations/"
+    echo "  ${project_path}/projects/"
     echo ""
     echo "To navigate: cd ${project_name}"
   else
@@ -266,7 +267,325 @@ function sign-in() {
   if command -v op &> /dev/null; then
     export BOBSHELL_API_KEY=$(op read "op://Private/Project Bob API key/credential" 2>/dev/null)
     echo "Signed in and BOBSHELL_API_KEY set."
+    export TEST_API_KEY="hello"
+    echo "Signed in and TEST_API_KEY set."
   else
     echo "op command not found."
   fi
 }
+
+# IBM ATL Customer Workspace Management
+
+# Initialize a new ATL customer workspace with complete folder structure
+function atl-init() {
+  if [ -z "$1" ]; then
+    echo "Usage: atl-init <customer_name>"
+    echo "Example: atl-init goldman_sachs"
+    return 1
+  fi
+
+  local customer_name=$1
+  local workspace_path="./${customer_name}"
+
+  if [ -d "$workspace_path" ]; then
+    echo "Error: Customer workspace '${customer_name}' already exists at ${workspace_path}"
+    return 1
+  fi
+
+  echo "Creating ATL workspace for '${customer_name}'..."
+
+  # Create main directory structure
+  mkdir -p "${workspace_path}/ibm"/{products,playbooks,enablement,assets}
+  mkdir -p "${workspace_path}/customer"/{org,initiatives,tech_stack,processes,contracts}
+  mkdir -p "${workspace_path}/active/template-project"/{notes,videos,docs,presentations,projects}
+  mkdir -p "${workspace_path}/meetings"/{2025_Q1,2025_Q2,2025_Q3,2025_Q4}
+  mkdir -p "${workspace_path}/opportunities"
+  mkdir -p "${workspace_path}/archive"
+
+  # Create .gitkeep files for empty directories
+  touch "${workspace_path}/ibm/products/.gitkeep"
+  touch "${workspace_path}/ibm/playbooks/.gitkeep"
+  touch "${workspace_path}/ibm/enablement/.gitkeep"
+  touch "${workspace_path}/ibm/assets/.gitkeep"
+  touch "${workspace_path}/meetings/2025_Q1/.gitkeep"
+  touch "${workspace_path}/meetings/2025_Q2/.gitkeep"
+  touch "${workspace_path}/meetings/2025_Q3/.gitkeep"
+  touch "${workspace_path}/meetings/2025_Q4/.gitkeep"
+  touch "${workspace_path}/archive/.gitkeep"
+
+  # Create customer/org/contacts.md with template
+  cat > "${workspace_path}/customer/org/contacts.md" << 'EOF'
+# Contacts
+
+## Key Contacts
+
+### Technical Contacts
+- **Name**: 
+  - Role: 
+  - Email: 
+  - Phone: 
+
+### Business Contacts
+- **Name**: 
+  - Role: 
+  - Email: 
+  - Phone: 
+
+## Notes
+- Add important contact information and communication preferences
+EOF
+
+  # Create customer/org/stakeholders.md with template
+  cat > "${workspace_path}/customer/org/stakeholders.md" << 'EOF'
+# Stakeholders
+
+## Executive Stakeholders
+- **Name**: 
+  - Title: 
+  - Influence Level: 
+  - Key Interests: 
+
+## Technical Stakeholders
+- **Name**: 
+  - Title: 
+  - Influence Level: 
+  - Key Interests: 
+
+## Business Stakeholders
+- **Name**: 
+  - Title: 
+  - Influence Level: 
+  - Key Interests: 
+EOF
+
+  # Create customer/initiatives/strategic_priorities.md with template
+  cat > "${workspace_path}/customer/initiatives/strategic_priorities.md" << 'EOF'
+# Strategic Priorities
+
+## Current Initiatives
+
+### Initiative 1
+- **Description**: 
+- **Timeline**: 
+- **Budget**: 
+- **Key Stakeholders**: 
+- **IBM Relevance**: 
+
+### Initiative 2
+- **Description**: 
+- **Timeline**: 
+- **Budget**: 
+- **Key Stakeholders**: 
+- **IBM Relevance**: 
+
+## Future Priorities
+- 
+EOF
+
+  # Create customer/tech_stack/current_state.md with template
+  cat > "${workspace_path}/customer/tech_stack/current_state.md" << 'EOF'
+# Current Technology Stack
+
+## Infrastructure
+- **Cloud Provider**: 
+- **On-Premise**: 
+- **Hybrid**: 
+
+## Key Technologies
+- **Databases**: 
+- **Application Servers**: 
+- **Development Tools**: 
+- **Security Tools**: 
+
+## IBM Products in Use
+- 
+
+## Pain Points
+- 
+EOF
+
+  # Create opportunities/pipeline.md with template
+  cat > "${workspace_path}/opportunities/pipeline.md" << 'EOF'
+# Opportunities Pipeline
+
+## Active Opportunities
+
+### Opportunity 1
+- **Name**: 
+- **Value**: 
+- **Stage**: 
+- **Expected Close**: 
+- **Products**: 
+- **Next Steps**: 
+
+## Future Opportunities
+- 
+EOF
+
+  # Create opportunities/rfps.md with template
+  cat > "${workspace_path}/opportunities/rfps.md" << 'EOF'
+# RFPs and Proposals
+
+## Active RFPs
+
+### RFP 1
+- **Title**: 
+- **Due Date**: 
+- **Estimated Value**: 
+- **Status**: 
+- **Requirements**: 
+- **Our Approach**: 
+
+## Submitted Proposals
+- 
+EOF
+
+  # Create root README.md
+  cat > "${workspace_path}/README.md" << EOF
+# ${customer_name} - ATL Customer Workspace
+
+## Directory Structure
+
+\`\`\`
+${customer_name}/
+├── ibm/                  # IBM-specific materials
+│   ├── products/         # Product research, positioning, battlecards
+│   ├── playbooks/        # Standard pitches, objection handling
+│   ├── enablement/       # Training, certifications
+│   └── assets/           # Logos, templates
+├── customer/             # Customer-specific information
+│   ├── org/              # Contacts, stakeholders, org charts
+│   ├── initiatives/      # Strategic programs, priorities
+│   ├── tech_stack/       # Architecture, systems, technologies
+│   ├── processes/        # Buying process, procurement
+│   └── contracts/        # Current agreements, SOWs
+├── active/               # Active projects (use atl-new to create)
+│   └── template-project/ # Template folder structure
+├── meetings/             # Meeting notes organized by quarter
+│   ├── 2025_Q1/
+│   ├── 2025_Q2/
+│   ├── 2025_Q3/
+│   └── 2025_Q4/
+├── opportunities/        # Pipeline, RFPs, proposals
+└── archive/              # Completed work
+\`\`\`
+
+## Quick Start
+
+### Create a new project
+From this directory, run:
+\`\`\`bash
+atl-new <project_name>
+\`\`\`
+
+This creates a new project in the \`active/\` folder with standard structure.
+
+## Usage
+
+- Store IBM product materials in \`ibm/\`
+- Document customer information in \`customer/\`
+- Create active projects with \`atl-new\`
+- Organize meetings by quarter in \`meetings/\`
+- Track opportunities and RFPs in \`opportunities/\`
+- Archive completed work in \`archive/\`
+EOF
+
+  if [ $? -eq 0 ]; then
+    echo "✓ ATL workspace '${customer_name}' created successfully!"
+    echo ""
+    echo "Structure created:"
+    echo "  ${workspace_path}/ibm/            # IBM materials"
+    echo "  ${workspace_path}/customer/       # Customer info"
+    echo "  ${workspace_path}/active/         # Active projects"
+    echo "  ${workspace_path}/meetings/       # Meeting notes"
+    echo "  ${workspace_path}/opportunities/  # Pipeline & RFPs"
+    echo "  ${workspace_path}/archive/        # Completed work"
+    echo ""
+    echo "Next steps:"
+    echo "  cd ${customer_name}"
+    echo "  atl-new <project_name>  # Create a new project"
+  else
+    echo "Failed to create ATL workspace '${customer_name}'."
+    return 1
+  fi
+}
+
+# Create a new project within an ATL workspace
+function atl-new() {
+  # Validate we're in an ATL workspace
+  if [ ! -d "./active" ] || [ ! -d "./ibm" ] || [ ! -d "./customer" ]; then
+    echo "Error: Not in an ATL workspace directory."
+    echo "This command must be run from the root of an ATL customer workspace."
+    echo "Expected folders: ./active, ./ibm, ./customer"
+    echo ""
+    echo "To create a new workspace, use: atl-init <customer_name>"
+    return 1
+  fi
+
+  if [ -z "$1" ]; then
+    echo "Usage: atl-new <project_name>"
+    echo "Example: atl-new watsonx_pilot"
+    return 1
+  fi
+
+  local project_name=$1
+  local project_path="./active/${project_name}"
+
+  if [ -d "$project_path" ]; then
+    echo "Error: Project '${project_name}' already exists at ${project_path}"
+    return 1
+  fi
+
+  echo "Creating ATL project '${project_name}'..."
+
+  # Create project directory structure
+  mkdir -p "${project_path}"/{notes,videos,docs,presentations,projects}
+
+  # Create project README
+  cat > "${project_path}/README.md" << EOF
+# ${project_name}
+
+## Project Overview
+Brief description of this project.
+
+## Directory Structure
+- \`notes/\` - Meeting notes, research, brainstorming
+- \`videos/\` - Recorded demos, presentations, training
+- \`docs/\` - Documentation, specifications, requirements
+- \`presentations/\` - Slide decks, pitch materials
+- \`projects/\` - Code, configurations, technical deliverables
+
+## Status
+- [ ] Initiated
+- [ ] Planning
+- [ ] In Progress
+- [ ] Review
+- [ ] Completed
+
+## Key Information
+- **Start Date**: 
+- **Target Completion**: 
+- **Stakeholders**: 
+- **Objectives**: 
+EOF
+
+  if [ $? -eq 0 ]; then
+    echo "✓ Project '${project_name}' created successfully!"
+    echo ""
+    echo "Project structure:"
+    echo "  ${project_path}/notes/"
+    echo "  ${project_path}/videos/"
+    echo "  ${project_path}/docs/"
+    echo "  ${project_path}/presentations/"
+    echo "  ${project_path}/projects/"
+    echo ""
+    echo "To navigate: cd active/${project_name}"
+  else
+    echo "Failed to create project '${project_name}'."
+    return 1
+  fi
+}
+
+# Aliases for ATL functions
+alias atli='atl-init'
+alias atln='atl-new'
