@@ -46,6 +46,7 @@ export PATH="$HOME/.opencode/bin:$PATH"
 # === Environment Variables ===
 export EDITOR=nvim
 export SYSTEMD_EDITOR=nvim
+export KUBE_EDITOR='nvim'
 
 # === Python Environment Manager (pyenv) ===
 export PYENV_ROOT="$HOME/.pyenv"
@@ -99,6 +100,12 @@ if command -v uv &> /dev/null; then
   eval "$(uv generate-shell-completion zsh)"
 fi
 
+# oc autocomplete
+if [ $commands[oc] ]; then
+  source <(oc completion zsh)
+  compdef _oc oc
+fi
+
 # Zoxide (smarter cd)
 if command -v zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
@@ -114,5 +121,3 @@ autoload -U +X bashcompinit && bashcompinit
 # Added by Antigravity
 export PATH="/Users/davidlevy/.antigravity/antigravity/bin:$PATH"
 
-# Added by Antigravity
-export PATH="/Users/davidlevy/.antigravity/antigravity/bin:$PATH"
