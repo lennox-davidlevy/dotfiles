@@ -1,42 +1,42 @@
 vim.g.mapleader = ","
+vim.g.maplocalleader = ","
 
 local undodir = vim.fn.stdpath("config") .. "/.undodir"
 if vim.fn.isdirectory(undodir) == 0 then
-    vim.fn.mkdir(undodir, "p")
+  vim.fn.mkdir(undodir, "p")
 end
 
 local options = {
-    -- style
-    number = true,
-    signcolumn = "yes",
-    termguicolors = true,
-    cmdheight = 1,
-    showmode = false,
-    wrap = false,
-    hlsearch = false,
-    showtabline = 0,
+  -- Style
+  number = true,
+  signcolumn = "yes",
+  termguicolors = true,
+  cmdheight = 1,
+  showmode = false,
+  wrap = false,
+  hlsearch = false,
+  showtabline = 0,
 
-    -- functionality
-    ignorecase = true,
-    splitright = true,
-    splitbelow = true,
-    clipboard = "unnamedplus",
-    expandtab = true,
-    tabstop = 4,
-    softtabstop = 4,
-    shiftwidth = 4,
-    smartindent = true,
-    mouse = "",
-    swapfile = false,
+  -- Functionality
+  ignorecase = true,
+  smartcase = true,
+  splitright = true,
+  splitbelow = true,
+  clipboard = "unnamedplus",
+  expandtab = true,
+  tabstop = 4,
+  softtabstop = 4,
+  shiftwidth = 4,
+  smartindent = true,
+  mouse = "",
+  swapfile = false,
+  updatetime = 200,
 
-    -- undo tree
-    undofile = true,
-    undodir = undodir,
+  -- Persistent undo
+  undofile = true,
+  undodir = undodir,
 }
 
-for k, v in pairs(options) do
-    vim.opt[k] = v
+for key, value in pairs(options) do
+  vim.opt[key] = value
 end
-
--- Suppress deprecation warnings
-vim.deprecate = function() end

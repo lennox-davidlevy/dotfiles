@@ -64,7 +64,7 @@
           community.general.homebrew_cask:
             name: "{{ casks.terminal }}"
             state: present
-          ignore_errors: true  # Some fonts might already be installed
+          ignore_errors: true # Some fonts might already be installed
 
         - name: Install productivity casks
           community.general.homebrew_cask:
@@ -260,19 +260,19 @@
           ========================================
           macOS Bootstrap Complete!
           ========================================
-          
+
           Architecture: {{ ansible_machine }}
           Homebrew prefix: {{ brew_prefix }}
-          
+
           Next steps:
           1. Restart your terminal or run: exec zsh
           2. Verify installations: nvim --version, python --version, node --version
           3. Install window manager manually if desired
-          
+
           Tools installed:
           - Python version manager: pyenv
           - Node version manager: fnm
           - Python package manager: uv
           - Modern CLI tools: ripgrep, fd, bat, eza, fzf, zoxide
-          
+
           Have fun!

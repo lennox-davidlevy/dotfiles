@@ -39,11 +39,11 @@ keep_sudo_alive() {
 keep_sudo_alive
 
 # Install Homebrew if not present
-if ! command -v brew &> /dev/null; then
+if ! command -v brew &>/dev/null; then
   echo ""
   echo "Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  
+
   # Add Homebrew to PATH for this session
   eval "$($BREW_PREFIX/bin/brew shellenv)"
 else

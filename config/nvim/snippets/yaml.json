@@ -1,0 +1,344 @@
+{
+    "k8s Secret": {
+        "prefix": "k8ssecret",
+        "description": "Kubernetes Secret with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0-standalone-strict/secret-v1.json",
+            "apiVersion: v1",
+            "kind: Secret",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "type: ${3|Opaque,kubernetes.io/tls,kubernetes.io/dockerconfigjson,kubernetes.io/basic-auth,kubernetes.io/ssh-auth|}",
+            "stringData:",
+            "  ${4:key}: ${5:value}",
+            ""
+        ]
+    },
+    "k8s ConfigMap": {
+        "prefix": "k8sconfigmap",
+        "description": "Kubernetes ConfigMap with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0-standalone-strict/configmap-v1.json",
+            "apiVersion: v1",
+            "kind: ConfigMap",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "data:",
+            "  ${3:key}: ${4:value}",
+            ""
+        ]
+    },
+    "k8s Deployment": {
+        "prefix": "k8sdeploy",
+        "description": "Kubernetes Deployment with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0-standalone-strict/deployment-apps-v1.json",
+            "apiVersion: apps/v1",
+            "kind: Deployment",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "  labels:",
+            "    app: ${1:name}",
+            "spec:",
+            "  replicas: ${3:1}",
+            "  selector:",
+            "    matchLabels:",
+            "      app: ${1:name}",
+            "  template:",
+            "    metadata:",
+            "      labels:",
+            "        app: ${1:name}",
+            "    spec:",
+            "      containers:",
+            "        - name: ${1:name}",
+            "          image: ${4:image:tag}",
+            "          ports:",
+            "            - containerPort: ${5:8080}",
+            ""
+        ]
+    },
+    "k8s Service": {
+        "prefix": "k8ssvc",
+        "description": "Kubernetes Service with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0-standalone-strict/service-v1.json",
+            "apiVersion: v1",
+            "kind: Service",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "spec:",
+            "  type: ${3|ClusterIP,NodePort,LoadBalancer,ExternalName|}",
+            "  selector:",
+            "    app: ${4:app-name}",
+            "  ports:",
+            "    - name: ${5:http}",
+            "      port: ${6:80}",
+            "      targetPort: ${7:8080}",
+            "      protocol: TCP",
+            ""
+        ]
+    },
+    "k8s Ingress": {
+        "prefix": "k8singress",
+        "description": "Kubernetes Ingress with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0-standalone-strict/ingress-networking-v1.json",
+            "apiVersion: networking.k8s.io/v1",
+            "kind: Ingress",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "spec:",
+            "  rules:",
+            "    - host: ${3:example.com}",
+            "      http:",
+            "        paths:",
+            "          - path: ${4:/}",
+            "            pathType: ${5|Prefix,Exact,ImplementationSpecific|}",
+            "            backend:",
+            "              service:",
+            "                name: ${6:service-name}",
+            "                port:",
+            "                  number: ${7:80}",
+            ""
+        ]
+    },
+    "k8s Namespace": {
+        "prefix": "k8sns",
+        "description": "Kubernetes Namespace with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0-standalone-strict/namespace-v1.json",
+            "apiVersion: v1",
+            "kind: Namespace",
+            "metadata:",
+            "  name: ${1:name}",
+            ""
+        ]
+    },
+    "k8s ServiceAccount": {
+        "prefix": "k8ssa",
+        "description": "Kubernetes ServiceAccount with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0-standalone-strict/serviceaccount-v1.json",
+            "apiVersion: v1",
+            "kind: ServiceAccount",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            ""
+        ]
+    },
+    "k8s Role": {
+        "prefix": "k8srole",
+        "description": "Kubernetes Role with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0-standalone-strict/role-rbac-v1.json",
+            "apiVersion: rbac.authorization.k8s.io/v1",
+            "kind: Role",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "rules:",
+            "  - apiGroups: [\"\"]",
+            "    resources: [\"${3:pods}\"]",
+            "    verbs: [\"${4:get}\", \"${5:list}\"]",
+            ""
+        ]
+    },
+    "k8s RoleBinding": {
+        "prefix": "k8srolebinding",
+        "description": "Kubernetes RoleBinding with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0-standalone-strict/rolebinding-rbac-v1.json",
+            "apiVersion: rbac.authorization.k8s.io/v1",
+            "kind: RoleBinding",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "subjects:",
+            "  - kind: ServiceAccount",
+            "    name: ${3:serviceaccount-name}",
+            "    namespace: ${2:default}",
+            "roleRef:",
+            "  kind: Role",
+            "  name: ${4:role-name}",
+            "  apiGroup: rbac.authorization.k8s.io",
+            ""
+        ]
+    },
+    "k8s PersistentVolumeClaim": {
+        "prefix": "k8spvc",
+        "description": "Kubernetes PersistentVolumeClaim with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0-standalone-strict/persistentvolumeclaim-v1.json",
+            "apiVersion: v1",
+            "kind: PersistentVolumeClaim",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "spec:",
+            "  accessModes:",
+            "    - ${3|ReadWriteOnce,ReadOnlyMany,ReadWriteMany,ReadWriteOncePod|}",
+            "  resources:",
+            "    requests:",
+            "      storage: ${4:1Gi}",
+            "  storageClassName: ${5:standard}",
+            ""
+        ]
+    },
+    "k8s Job": {
+        "prefix": "k8sjob",
+        "description": "Kubernetes Job with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0-standalone-strict/job-batch-v1.json",
+            "apiVersion: batch/v1",
+            "kind: Job",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "spec:",
+            "  template:",
+            "    spec:",
+            "      restartPolicy: ${3|Never,OnFailure|}",
+            "      containers:",
+            "        - name: ${1:name}",
+            "          image: ${4:image:tag}",
+            "          command: [${5:\"/bin/sh\", \"-c\", \"echo hello\"}]",
+            ""
+        ]
+    },
+    "k8s CronJob": {
+        "prefix": "k8scronjob",
+        "description": "Kubernetes CronJob with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.30.0-standalone-strict/cronjob-batch-v1.json",
+            "apiVersion: batch/v1",
+            "kind: CronJob",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "spec:",
+            "  schedule: \"${3:0 * * * *}\"",
+            "  jobTemplate:",
+            "    spec:",
+            "      template:",
+            "        spec:",
+            "          restartPolicy: OnFailure",
+            "          containers:",
+            "            - name: ${1:name}",
+            "              image: ${4:image:tag}",
+            ""
+        ]
+    },
+    "OpenShift ImageStream": {
+        "prefix": "ocpis",
+        "description": "OpenShift ImageStream with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/garethr/openshift-json-schema/master/v3.11.0-standalone-strict/imagestream-image-v1.json",
+            "apiVersion: image.openshift.io/v1",
+            "kind: ImageStream",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "spec:",
+            "  lookupPolicy:",
+            "    local: ${3|true,false|}",
+            ""
+        ]
+    },
+    "OpenShift Route": {
+        "prefix": "ocproute",
+        "description": "OpenShift Route with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/garethr/openshift-json-schema/master/v3.11.0-standalone-strict/route-route-v1.json",
+            "apiVersion: route.openshift.io/v1",
+            "kind: Route",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "spec:",
+            "  host: ${3:example.apps.cluster.com}",
+            "  to:",
+            "    kind: Service",
+            "    name: ${4:service-name}",
+            "  port:",
+            "    targetPort: ${5:http}",
+            "  tls:",
+            "    termination: ${6|edge,passthrough,reencrypt|}",
+            ""
+        ]
+    },
+    "OpenShift DeploymentConfig": {
+        "prefix": "ocpdc",
+        "description": "OpenShift DeploymentConfig with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/garethr/openshift-json-schema/master/v3.11.0-standalone-strict/deploymentconfig-apps-v1.json",
+            "apiVersion: apps.openshift.io/v1",
+            "kind: DeploymentConfig",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "spec:",
+            "  replicas: ${3:1}",
+            "  selector:",
+            "    app: ${1:name}",
+            "  template:",
+            "    metadata:",
+            "      labels:",
+            "        app: ${1:name}",
+            "    spec:",
+            "      containers:",
+            "        - name: ${1:name}",
+            "          image: ${4:image:tag}",
+            ""
+        ]
+    },
+    "OpenShift BuildConfig": {
+        "prefix": "ocpbc",
+        "description": "OpenShift BuildConfig with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/garethr/openshift-json-schema/master/v3.11.0-standalone-strict/buildconfig-build-v1.json",
+            "apiVersion: build.openshift.io/v1",
+            "kind: BuildConfig",
+            "metadata:",
+            "  name: ${1:name}",
+            "  namespace: ${2:default}",
+            "spec:",
+            "  source:",
+            "    type: Git",
+            "    git:",
+            "      uri: ${3:https://github.com/org/repo}",
+            "      ref: ${4:main}",
+            "  strategy:",
+            "    type: ${5|Source,Docker|}",
+            "  output:",
+            "    to:",
+            "      kind: ImageStreamTag",
+            "      name: ${6:${1:name}:latest}",
+            ""
+        ]
+    },
+    "OpenShift Project": {
+        "prefix": "ocpproject",
+        "description": "OpenShift Project with schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=https://raw.githubusercontent.com/garethr/openshift-json-schema/master/v3.11.0-standalone-strict/project-project-v1.json",
+            "apiVersion: project.openshift.io/v1",
+            "kind: Project",
+            "metadata:",
+            "  name: ${1:name}",
+            ""
+        ]
+    },
+    "Schema modeline": {
+        "prefix": "yamlschema",
+        "description": "Inline yaml-language-server schema modeline",
+        "body": [
+            "# yaml-language-server: $schema=${1:https://}"
+        ]
+    }
+}

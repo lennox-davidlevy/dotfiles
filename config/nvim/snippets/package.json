@@ -1,0 +1,13 @@
+{
+    "name": "dotfiles-snippets",
+    "version": "1.0.0",
+    "description": "Custom snippets for k8s/OpenShift and other YAML",
+    "contributes": {
+        "snippets": [
+            {
+                "language": ["yaml", "yml"],
+                "path": "./yaml.json"
+            }
+        ]
+    }
+}
