@@ -80,29 +80,31 @@ return {
         callback = set_float_highlights,
       })
 
+      -- Clean up HTML tags and backslash escapes from LSP hover content before
+      -- stylize_markdown runs, so treesitter sees clean markdown from the start.
+      -- ansiblels (archived, no upstream fix) sends ansible-doc output as
+      -- HTML-mixed markdown that Neovim's renderer can't handle natively.
+      local orig_convert = vim.lsp.util.convert_input_to_markdown_lines
+      vim.lsp.util.convert_input_to_markdown_lines = function(input, contents)
+        contents = orig_convert(input, contents)
+        return vim.tbl_map(function(line)
+          line = line:gsub("<code><strong>(.-)</strong></code>", "**`%1`**")
+          line = line:gsub("<strong><code>(.-)</code></strong>", "**`%1`**")
+          line = line:gsub("<code>(.-)</code>", "`%1`")
+          line = line:gsub("<strong>(.-)</strong>", "**%1**")
+          line = line:gsub("<em>(.-)</em>", "*%1*")
+          line = line:gsub("<[^>]+>", "")
+          line = line:gsub("\\(.)", "%1")
+          return line
+        end, contents)
+      end
+
       local original_open_floating_preview = vim.lsp.util.open_floating_preview
       function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
         opts = opts or {}
         opts.border = opts.border or "rounded"
         opts.max_width = opts.max_width or 100
         opts.max_height = opts.max_height or 30
-
-        -- Some LSP servers (ansiblels, etc.) return markdown with embedded HTML
-        -- tags and backslash-escaped punctuation. Convert to clean markdown so
-        -- the hover window renders readable text instead of raw markup.
-        if syntax == "markdown" and type(contents) == "table" then
-          for i, line in ipairs(contents) do
-            line = line:gsub("<code><strong>(.-)</strong></code>", "**`%1`**")
-            line = line:gsub("<strong><code>(.-)</code></strong>", "**`%1`**")
-            line = line:gsub("<code>(.-)</code>", "`%1`")
-            line = line:gsub("<strong>(.-)</strong>", "**%1**")
-            line = line:gsub("<em>(.-)</em>", "*%1*")
-            line = line:gsub("<[^>]+>", "")
-            line = line:gsub("\\(.)", "%1")
-            contents[i] = line
-          end
-        end
-
         return original_open_floating_preview(contents, syntax, opts, ...)
       end
 

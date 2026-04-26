@@ -107,7 +107,36 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
     "*/inventory/*/host_vars/*.yml",
     "*/inventory/*/host_vars/*.yaml",
   },
-  callback = function()
+  callback = function(args)
+    -- Some YAML files under playbooks/ are NOT playbooks (they're dicts,
+    -- not lists of plays). ansible-lint will reject them, so we tag them
+    -- as plain YAML and let the YAML LSP handle them.
+    local file = args.file
+    local basename = vim.fn.fnamemodify(file, ":t")
+
+    -- Skip by exact filename (Galaxy specs, role meta, etc.)
+    local skip_basename = {
+      ["requirements.yml"] = true,
+      ["requirements.yaml"] = true,
+      ["meta.yml"] = true,
+      ["meta.yaml"] = true,
+      ["ansible.cfg"] = true,
+    }
+    if skip_basename[basename] then
+      vim.bo.filetype = "yaml"
+      return
+    end
+
+    -- Skip vars-style directories anywhere in the path
+    -- (these hold variable dicts, not plays)
+    local skip_dirs = { "/vars/", "/group_vars/", "/host_vars/", "/defaults/" }
+    for _, dir in ipairs(skip_dirs) do
+      if file:find(dir, 1, true) then
+        vim.bo.filetype = "yaml"
+        return
+      end
+    end
+
     vim.bo.filetype = "yaml.ansible"
   end,
 })

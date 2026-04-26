@@ -22,7 +22,7 @@
   hosts: localhost
   become: false
   vars_files:
-    - packages-macos.yml
+    - vars/packages-macos.yml
   tasks:
     - name: Homebrew setup
       block:
@@ -64,19 +64,16 @@
           community.general.homebrew_cask:
             name: "{{ casks.terminal }}"
             state: present
-          ignore_errors: true # Some fonts might already be installed
 
         - name: Install productivity casks
           community.general.homebrew_cask:
             name: "{{ casks.productivity }}"
             state: present
-          ignore_errors: true
 
         - name: Install browser casks
           community.general.homebrew_cask:
             name: "{{ casks.browsers }}"
             state: present
-          ignore_errors: true
 
     - name: User environment setup
       block:
@@ -95,6 +92,7 @@
           ansible.builtin.git:
             repo: https://github.com/romkatv/powerlevel10k.git
             dest: "{{ actual_user_home }}/powerlevel10k"
+            version: master
             depth: 1
             force: true
 
@@ -231,6 +229,7 @@
         - name: Install latest Python with pyenv
           ansible.builtin.shell:
             cmd: |
+              set -o pipefail
               eval "$({{ brew_prefix }}/bin/brew shellenv)"
               export PYENV_ROOT="$HOME/.pyenv"
               export PATH="$PYENV_ROOT/bin:$PATH"
@@ -240,7 +239,7 @@
           args:
             executable: /bin/zsh
           changed_when: true
-          ignore_errors: true
+          failed_when: false
 
         - name: Install latest LTS Node with fnm
           ansible.builtin.shell:
@@ -252,7 +251,7 @@
           args:
             executable: /bin/zsh
           changed_when: true
-          ignore_errors: true
+          failed_when: false
 
     - name: Final message
       ansible.builtin.debug:
