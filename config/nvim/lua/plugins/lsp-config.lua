@@ -57,18 +57,6 @@ return {
         "inventory",
       }
 
-      local function is_ansible_path(path)
-        return path:match("/playbooks/.*%.ya?ml$")
-          or path:match("/roles/.*/tasks/.*%.ya?ml$")
-          or path:match("/roles/.*/handlers/.*%.ya?ml$")
-          or path:match("/roles/.*/defaults/.*%.ya?ml$")
-          or path:match("/roles/.*/vars/.*%.ya?ml$")
-          or path:match("/roles/.*/meta/.*%.ya?ml$")
-          or path:match("/inventory/.*/hosts%.ya?ml$")
-          or path:match("/inventory/.*/group_vars/.*%.ya?ml$")
-          or path:match("/inventory/.*/host_vars/.*%.ya?ml$")
-      end
-
       local function set_float_highlights()
         vim.api.nvim_set_hl(0, "NormalFloat", { link = "Normal" })
         vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none" })
@@ -169,19 +157,12 @@ return {
           },
         },
         yamlls = {
+          filetypes = { "yaml" },
           capabilities = vim.tbl_deep_extend("force", capabilities, {
             textDocument = {
               foldingRange = { dynamicRegistration = false, lineFoldingOnly = true },
             },
           }),
-          root_dir = function(bufnr, on_dir)
-            local fname = vim.api.nvim_buf_get_name(bufnr)
-            if is_ansible_path(fname) then
-              return
-            end
-
-            on_dir(default_root_dir(fname))
-          end,
           settings = {
             redhat = { telemetry = { enabled = false } },
             yaml = {
@@ -202,7 +183,7 @@ return {
           },
         },
         ansiblels = {
-          filetypes = { "yaml", "yml", "yaml.ansible" },
+          filetypes = { "yaml.ansible" },
           root_dir = function(bufnr, on_dir)
             local fname = vim.api.nvim_buf_get_name(bufnr)
             local root = util.root_pattern(unpack(ansible_root_markers))(fname)
