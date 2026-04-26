@@ -3,7 +3,6 @@ return {
   dependencies = {
     "williamboman/mason.nvim",
   },
-  event = "BufWritePre",
   keys = { "<leader>gf" },
   config = function()
     local conform = require("conform")

@@ -10,7 +10,6 @@ return {
     null_ls.setup({
       sources = {
         null_ls.builtins.diagnostics.dotenv_linter.with({
-          command = "dotenv-linter",
           args = { "check", "$FILENAME" },
         }),
         null_ls.builtins.diagnostics.ansiblelint,

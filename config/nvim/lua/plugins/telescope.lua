@@ -139,16 +139,39 @@ return {
         end
       end
 
+      -- Flash jump within a Telescope picker: labels each result row so you
+      -- can skip directly to any entry without arrow-key scrolling.
+      local function flash_in_picker(prompt_bufnr)
+        require("flash").jump({
+          pattern = "^",
+          label = { after = { 0, 0 } },
+          search = {
+            mode = "search",
+            exclude = {
+              function(win)
+                return vim.bo[vim.api.nvim_win_get_buf(win)].filetype ~= "TelescopeResults"
+              end,
+            },
+          },
+          action = function(match)
+            local picker = action_state.get_current_picker(prompt_bufnr)
+            picker:set_selection(match.pos[1] - 1)
+          end,
+        })
+      end
+
       telescope.setup({
         defaults = {
           path_display = { "smart" },
           mappings = {
             i = {
               ["<CR>"] = select_if_present,
+              ["<c-s>"] = flash_in_picker,
             },
             n = {
               ["q"] = actions.close,
               ["<CR>"] = select_if_present,
+              ["s"] = flash_in_picker,
             },
           },
         },

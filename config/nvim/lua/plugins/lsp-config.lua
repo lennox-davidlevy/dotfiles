@@ -41,6 +41,7 @@ return {
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
       { "b0o/schemastore.nvim", version = false },
+      "hrsh7th/cmp-nvim-lsp",
     },
     config = function()
       local util = require("lspconfig.util")
@@ -85,6 +86,23 @@ return {
         opts.border = opts.border or "rounded"
         opts.max_width = opts.max_width or 100
         opts.max_height = opts.max_height or 30
+
+        -- Some LSP servers (ansiblels, etc.) return markdown with embedded HTML
+        -- tags and backslash-escaped punctuation. Convert to clean markdown so
+        -- the hover window renders readable text instead of raw markup.
+        if syntax == "markdown" and type(contents) == "table" then
+          for i, line in ipairs(contents) do
+            line = line:gsub("<code><strong>(.-)</strong></code>", "**`%1`**")
+            line = line:gsub("<strong><code>(.-)</code></strong>", "**`%1`**")
+            line = line:gsub("<code>(.-)</code>", "`%1`")
+            line = line:gsub("<strong>(.-)</strong>", "**%1**")
+            line = line:gsub("<em>(.-)</em>", "*%1*")
+            line = line:gsub("<[^>]+>", "")
+            line = line:gsub("\\(.)", "%1")
+            contents[i] = line
+          end
+        end
+
         return original_open_floating_preview(contents, syntax, opts, ...)
       end
 
@@ -93,6 +111,7 @@ return {
         float = {
           border = "rounded",
           source = "if_many",
+          max_width = 100,
         },
       })
 
@@ -112,6 +131,11 @@ return {
           map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
           map("<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
           map("<leader>e", vim.diagnostic.open_float, "Show Line Diagnostics")
+
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+          if client and client.name == "gopls" then
+            client.server_capabilities.documentFormattingProvider = false
+          end
         end,
       })
 
@@ -150,7 +174,7 @@ return {
                 diagnosticSeverityOverrides = {
                   reportUnusedImport = "none",
                   reportMissingParameterType = "none",
-                  reportCallIssue = false,
+                  reportCallIssue = "none",
                 },
               },
             },
@@ -190,7 +214,6 @@ return {
 
             on_dir(root or default_root_dir(fname))
           end,
-          single_file_support = true,
           settings = {
             ansible = {
               ansible = {
@@ -236,11 +259,7 @@ return {
             },
           },
         },
-        gopls = {
-          on_attach = function(client)
-            client.server_capabilities.documentFormattingProvider = false
-          end,
-        },
+        gopls = {},
         terraformls = {
           filetypes = { "terraform" },
           settings = {

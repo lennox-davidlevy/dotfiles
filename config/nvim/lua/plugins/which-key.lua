@@ -17,7 +17,6 @@ return {
       { "<leader>d", group = "Diff" },
       { "<leader>f", group = "Find" },
       { "<leader>g", group = "Git" },
-      { "<leader>l", group = "Lint" },
       { "<leader>r", group = "Remote" },
     })
   end,
