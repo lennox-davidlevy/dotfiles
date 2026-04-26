@@ -52,10 +52,6 @@ return {
         lsp_format = "fallback",
         async = false,
       })
-
-      vim.defer_fn(function()
-        pcall(require("lint").try_lint)
-      end, 150)
     end, { desc = "Format buffer" })
   end,
 }

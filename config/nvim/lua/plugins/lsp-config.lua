@@ -206,6 +206,9 @@ return {
                 provideRedirectModules = true,
                 provideModuleOptionAliases = true,
               },
+              validation = {
+                lint = { enabled = false },
+              },
             },
           },
         },
