@@ -6,6 +6,12 @@ return {
     opts = {},
   },
   {
+    "phha/zenburn.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {},
+  },
+  {
     "sainnhe/gruvbox-material",
     lazy = true,
   },
