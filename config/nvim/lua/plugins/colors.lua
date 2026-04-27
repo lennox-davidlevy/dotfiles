@@ -6,12 +6,6 @@ return {
     opts = {},
   },
   {
-    "phha/zenburn.nvim",
-    lazy = false,
-    priority = 1000,
-    opts = {},
-  },
-  {
     "sainnhe/gruvbox-material",
     lazy = true,
   },
@@ -26,12 +20,12 @@ return {
   {
     "folke/tokyonight.nvim",
     lazy = true,
-    opts = {},
+    priority = 1000,
   },
   {
     "neanias/everforest-nvim",
     version = false,
-    lazy = true,
+    lazy = false,
     config = function()
       require("everforest").setup({})
     end,

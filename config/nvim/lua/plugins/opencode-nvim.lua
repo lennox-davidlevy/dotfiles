@@ -1,19 +1,14 @@
 return {
-  "NickvanDyke/opencode.nvim",
-  dependencies = {
-    { "folke/snacks.nvim", opts = { input = {}, picker = {}, terminal = {} } },
-  },
+  "nickjvandyke/opencode.nvim",
+  version = "*", -- Latest stable release
+  event = "VeryLazy", -- Ensure event handlers (reload, permissions) register early
+  dependencies = { "folke/snacks.nvim" },
   init = function()
     vim.g.opencode_opts = {
-      provider = {
-        enabled = "tmux",
-        tmux = {
-          options = "-h -l 33%",
-        },
-      },
+      -- Use defaults; embedded terminal works out of the box
     }
 
-    vim.o.autoread = true
+    vim.o.autoread = true -- Required for `opts.events.reload`
   end,
   keys = {
     {
@@ -63,7 +58,7 @@ return {
       function()
         require("opencode").command("session.half.page.up")
       end,
-      mode = "n",
+      mode = { "n", "t" },
       desc = "Scroll opencode up",
     },
     {
@@ -71,7 +66,7 @@ return {
       function()
         require("opencode").command("session.half.page.down")
       end,
-      mode = "n",
+      mode = { "n", "t" },
       desc = "Scroll opencode down",
     },
   },

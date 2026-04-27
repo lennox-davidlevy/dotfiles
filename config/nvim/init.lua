@@ -24,7 +24,7 @@ require("lazy").setup("plugins", {
 })
 
 -- Colorscheme setup
-local my_colorscheme = "zenburn" -- "gruvbox", "zenburn"
+local my_colorscheme = "everforest" -- "gruvbox", "everforest"
 local my_background = "dark"
 
 local function set_colorscheme(scheme, background)
