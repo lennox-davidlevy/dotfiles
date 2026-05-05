@@ -18,6 +18,7 @@ return {
           "dockerls",
           "docker_compose_language_service",
           "gopls",
+          "helm_ls",
           "jsonls",
           "lua_ls",
           "marksman",
@@ -183,7 +184,7 @@ return {
           },
         },
         yamlls = {
-          filetypes = { "yaml" },
+          filetypes = { "yaml", "yaml.helm-values" },
           capabilities = vim.tbl_deep_extend("force", capabilities, {
             textDocument = {
               foldingRange = { dynamicRegistration = false, lineFoldingOnly = true },
@@ -262,6 +263,19 @@ return {
           },
         },
         gopls = {},
+        helm_ls = {
+          filetypes = { "helm" },
+          settings = {
+            ["helm-ls"] = {
+              yamlls = {
+                enabled = true,
+                path = "yaml-language-server",
+                showDiagnosticsDirectly = false,
+                diagnosticsLimit = 50,
+              },
+            },
+          },
+        },
         terraformls = {
           filetypes = { "terraform" },
           settings = {

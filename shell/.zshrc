@@ -76,6 +76,11 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 if [[ -d /usr/local/go/bin ]]; then
   export PATH="$PATH:/usr/local/go/bin"
 fi
+# User binaries installed via `go install` (defaults to ~/go/bin)
+export GOPATH="${GOPATH:-$HOME/go}"
+if [[ -d "$GOPATH/bin" ]]; then
+  export PATH="$GOPATH/bin:$PATH"
+fi
 
 # === Theme ===
 source ~/powerlevel10k/powerlevel10k.zsh-theme

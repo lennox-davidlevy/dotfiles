@@ -19,6 +19,7 @@ return {
       "go",
       "hcl",
       "terraform",
+      "helm",
     },
     auto_install = true,
     indent = {
