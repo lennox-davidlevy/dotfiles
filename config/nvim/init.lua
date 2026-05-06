@@ -1,6 +1,14 @@
 require("core.options")
 require("core.keymaps")
 
+-- Disable unused language providers. All plugins in this config are pure Lua,
+-- so the Node/Python/Perl/Ruby bridges are dead weight. Re-enable any of these
+-- if you install a plugin that requires it.
+vim.g.loaded_node_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_ruby_provider = 0
+
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then

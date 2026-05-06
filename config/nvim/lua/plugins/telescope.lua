@@ -1,7 +1,7 @@
 return {
   {
     "nvim-telescope/telescope.nvim",
-    tag = "0.1.8",
+    version = "*",
     dependencies = {
       "nvim-lua/plenary.nvim",
       {
@@ -11,7 +11,6 @@ return {
           return vim.fn.executable("make") == 1
         end,
       },
-      "nvim-telescope/telescope-ui-select.nvim",
     },
     keys = {
       {
@@ -184,7 +183,6 @@ return {
           },
         },
         extensions = {
-          ["ui-select"] = require("telescope.themes").get_dropdown({}),
           fzf = {
             fuzzy = true,
             override_generic_sorter = true,
@@ -195,7 +193,6 @@ return {
       })
 
       pcall(telescope.load_extension, "fzf")
-      pcall(telescope.load_extension, "ui-select")
     end,
   },
 }
