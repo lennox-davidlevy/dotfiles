@@ -3,6 +3,7 @@
 
 homebrew_taps:
   - homebrew/cask-fonts
+  - nikitabobko/tap   # Required for aerospace window manager
 
 packages:
   core:
@@ -49,7 +50,10 @@ casks:
     - raycast     # Spotlight replacement (free)
     - rectangle   # Window management (simple)
     - stats       # System monitor
-    
+
+  window_managers:
+    - aerospace   # Tiling window manager (i3-like)
+
   browsers:
     - brave-browser
 

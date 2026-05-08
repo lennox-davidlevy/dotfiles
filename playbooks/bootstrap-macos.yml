@@ -75,6 +75,11 @@
             name: "{{ casks.browsers }}"
             state: present
 
+        - name: Install window manager casks
+          community.general.homebrew_cask:
+            name: "{{ casks.window_managers }}"
+            state: present
+
     - name: User environment setup
       block:
         - name: Check if Oh My Zsh is installed
@@ -142,6 +147,19 @@
               ansible.builtin.file:
                 src: "{{ playbook_dir }}/../config/nvim"
                 dest: "{{ actual_user_home }}/.config/nvim"
+                state: link
+
+        - name: Symlink aerospace config
+          block:
+            - name: Remove existing aerospace config if it exists
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.config/aerospace"
+                state: absent
+
+            - name: Create aerospace config symlink
+              ansible.builtin.file:
+                src: "{{ playbook_dir }}/../config/aerospace"
+                dest: "{{ actual_user_home }}/.config/aerospace"
                 state: link
 
         - name: Symlink .p10k
