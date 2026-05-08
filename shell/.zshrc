@@ -123,6 +123,12 @@ fi
 
 autoload -U +X bashcompinit && bashcompinit
 
+# Vault autocomplete (HashiCorp Vault CLI)
+# https://developer.hashicorp.com/vault/docs/commands#enable-autocomplete
+if command -v vault &> /dev/null; then
+  complete -o nospace -C "$(command -v vault)" vault
+fi
+
 # Added by Antigravity
 export PATH="/Users/davidlevy/.antigravity/antigravity/bin:$PATH"
 
