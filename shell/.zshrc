@@ -47,6 +47,7 @@ export PATH="$HOME/.opencode/bin:$PATH"
 export EDITOR=nvim
 export SYSTEMD_EDITOR=nvim
 export KUBE_EDITOR='nvim'
+export OPENCODE_ENABLE_EXA=1
 
 # === Python Environment Manager (pyenv) ===
 export PYENV_ROOT="$HOME/.pyenv"
@@ -131,4 +132,3 @@ fi
 
 # Added by Antigravity
 export PATH="/Users/davidlevy/.antigravity/antigravity/bin:$PATH"
-
