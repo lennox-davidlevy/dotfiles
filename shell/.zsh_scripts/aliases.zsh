@@ -4,8 +4,21 @@ alias kb=kubectl
 alias dk=docker
 alias pd=podman
 alias ic="ibmcloud"
-alias ls="ls --color=auto"
 alias open="xdg-open"
+
+unalias ls ll la lt lsa 2>/dev/null
+
+# Modern eza if installed, otherwise fallback to standard ls
+if command -v eza &> /dev/null; then
+  ls() { eza --icons "$@" }
+  ll() { eza -lah --icons "$@" }
+  la() { eza -a --icons "$@" }
+  lt() { eza --tree --icons "$@" }
+else
+  alias ls="ls --color=auto"
+  alias ll="ls -lah"
+  alias la="ls -a"
+fi
 
 # Docker
 alias dia="docker image ls | bat"

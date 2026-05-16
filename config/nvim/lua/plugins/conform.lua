@@ -1,59 +1,56 @@
 return {
-	"stevearc/conform.nvim",
-	dependencies = {
-		"williamboman/mason.nvim",
-	},
-	event = "BufWritePre",
-	keys = { "<leader>gf" },
+  "stevearc/conform.nvim",
+  dependencies = {
+    "williamboman/mason.nvim",
+  },
+  keys = { "<leader>gf" },
+  config = function()
+    local conform = require("conform")
 
-	config = function()
-		local conform = require("conform")
+    conform.setup({
+      formatters_by_ft = {
+        lua = { "stylua" },
+        python = { "ruff_fix", "ruff_organize_imports", "ruff_format" },
+        toml = { "taplo" },
+        javascript = { "prettierd" },
+        typescript = { "prettierd" },
+        javascriptreact = { "prettierd" },
+        typescriptreact = { "prettierd" },
+        vue = { "prettierd" },
+        css = { "prettierd" },
+        scss = { "prettierd" },
+        html = { "prettierd" },
+        json = { "prettierd" },
+        markdown = { "prettierd" },
+        yaml = { "prettierd" },
+        ["yaml.ansible"] = { "prettierd" },
+        ["yaml.docker-compose"] = { "prettierd" },
+        zsh = { "shfmt" },
+        sh = { "shfmt" },
+        bash = { "shfmt" },
+        rust = { "rustfmt" },
+        terraform = { "terraform_fmt" },
+        go = { "gofumpt" },
+      },
+      format_on_save = nil,
+      formatters = {
+        stylua = {
+          args = {
+            "--search-parent-directories",
+            "--stdin-filepath",
+            "$FILENAME",
+            "-",
+          },
+        },
+      },
+    })
 
-		conform.setup({
-			formatters_by_ft = {
-				lua = { "stylua" },
-				python = { "ruff_fix", "ruff_format", "ruff_organize_imports" },
-				toml = { "pyproject-fmt" },
-				javascript = { "prettierd" },
-				typescript = { "prettierd" },
-				javascriptreact = { "prettierd" },
-				typescriptreact = { "prettierd" },
-				vue = { "prettierd" },
-				css = { "prettierd" },
-				scss = { "prettierd" },
-				html = { "prettierd" },
-				json = { "prettierd" },
-				markdown = { "prettierd" },
-				yaml = { "prettierd" },
-				yml = { "prettierd" },
-				zsh = { "shfmt" },
-				sh = { "shfmt" },
-				rust = { "rustfmt" },
-				terraform = { "terraform_fmt" },
-				tf = { "terraform_fmt" },
-				hcl = { "terraform_fmt" },
-			},
-
-			format_on_save = nil,
-			formatters = {
-				stylua = {
-					args = {
-						"--search-parent-directories",
-						"--stdin-filepath",
-						"$FILENAME",
-						"-",
-					},
-				},
-			},
-		})
-
-		-- Manual formatting keymap
-		vim.keymap.set({ "n", "v" }, "<leader>gf", function()
-			conform.format({
-				timeout_ms = 1000,
-				lsp_format = "fallback",
-				async = false,
-			})
-		end, { desc = "Format buffer [conform]" })
-	end,
+    vim.keymap.set({ "n", "v" }, "<leader>gf", function()
+      conform.format({
+        timeout_ms = 1000,
+        lsp_format = "fallback",
+        async = false,
+      })
+    end, { desc = "Format buffer" })
+  end,
 }

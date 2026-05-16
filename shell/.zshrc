@@ -19,26 +19,27 @@ setopt HIST_IGNORE_SPACE
 setopt HIST_VERIFY
 setopt SHARE_HISTORY
 
-# Options
+# === Options ===
 setopt autocd
 unsetopt beep extendedglob
 bindkey -v
 
 # === Completion System ===
-zstyle :compinstall filename '/home/david/.zshrc'
-autoload -Uz compinit
-compinit
+zstyle :compinstall filename "$HOME/.zshrc"
+autoload -Uz compinit && compinit -C
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 
 # === PATH Configuration ===
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="/home/david/bin:$PATH"
-export PATH="/home/david/.opencode/bin:$PATH"
-export PATH="/opt/zig:$PATH"
+export PATH="$HOME/bin:$PATH"
+export PATH="$HOME/.opencode/bin:$PATH"
+[[ -d /opt/zig ]] && export PATH="/opt/zig:$PATH"
 
 # === Environment Variables ===
 export EDITOR=nvim
 export SYSTEMD_EDITOR=nvim
+export KUBE_EDITOR='nvim'
+export OPENCODE_ENABLE_EXA=1
 
 # === Python Environment Manager (pyenv) ===
 export PYENV_ROOT="$HOME/.pyenv"
@@ -48,9 +49,7 @@ if [[ -d $PYENV_ROOT/bin ]]; then
 fi
 
 # === Node Version Manager (fnm) ===
-FNM_PATH="/home/david/.local/share/fnm"
-if [ -d "$FNM_PATH" ]; then
-  export PATH="/home/david/.local/share/fnm:$PATH"
+if command -v fnm &> /dev/null; then
   eval "$(fnm env --use-on-cd --shell zsh)"
   eval "$(fnm completions --shell zsh)"
 fi
@@ -58,11 +57,16 @@ fi
 # === Bun ===
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
-[ -s "/home/david/.bun/_bun" ] && source "/home/david/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # === Go ===
 if [[ -d /usr/local/go/bin ]]; then
   export PATH="$PATH:/usr/local/go/bin"
+fi
+# User binaries installed via `go install` (defaults to ~/go/bin)
+export GOPATH="${GOPATH:-$HOME/go}"
+if [[ -d "$GOPATH/bin" ]]; then
+  export PATH="$GOPATH/bin:$PATH"
 fi
 
 # === Theme ===
@@ -73,6 +77,7 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 [ -f ~/.zsh_scripts/tmux-autostart.zsh ] && source ~/.zsh_scripts/tmux-autostart.zsh
 [ -f ~/.zsh_scripts/aliases.zsh ] && source ~/.zsh_scripts/aliases.zsh
 [ -f ~/.zsh_scripts/functions.zsh ] && source ~/.zsh_scripts/functions.zsh
+# [ -f ~/.zsh_scripts/secrets.zsh ] && source ~/.zsh_scripts/secrets.zsh
 
 # === Environment Directories ===
 [ -f ~/.env_directories ] && source ~/.env_directories
@@ -80,7 +85,39 @@ source ~/powerlevel10k/powerlevel10k.zsh-theme
 # === Ollama setup ===
 export OLLAMA_MODELS=/mnt/fast-nvme-2t/ollama/models
 
-autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/bin/nomad nomad
+# === Additional Tools ===
+# UV (Python package installer)
+if command -v uv &> /dev/null; then
+  eval "$(uv generate-shell-completion zsh)"
+fi
 
-fpath+=~/.zfunc; autoload -Uz compinit; compinit
+# oc autocomplete
+if [ $commands[oc] ]; then
+  source <(oc completion zsh)
+  compdef _oc oc
+fi
+
+# Zoxide (smarter cd)
+if command -v zoxide &> /dev/null; then
+  eval "$(zoxide init zsh)"
+fi
+
+# FZF (fuzzy finder)
+if command -v fzf &> /dev/null; then
+  eval "$(fzf --zsh)"
+fi
+
+autoload -U +X bashcompinit && bashcompinit
+
+# Nomad autocomplete
+if command -v nomad &> /dev/null; then
+  complete -o nospace -C "$(command -v nomad)" nomad
+fi
+
+# Vault autocomplete (HashiCorp Vault CLI)
+# https://developer.hashicorp.com/vault/docs/commands#enable-autocomplete
+if command -v vault &> /dev/null; then
+  complete -o nospace -C "$(command -v vault)" vault
+fi
+
+fpath+=~/.zfunc

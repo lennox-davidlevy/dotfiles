@@ -18,6 +18,16 @@ shell/.zcompdump*
 
 # System files
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.fseventsd
+.TemporaryItems
+.apdisk
 Thumbs.db
 
 # Local environment

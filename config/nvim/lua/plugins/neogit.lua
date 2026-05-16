@@ -1,34 +1,38 @@
 return {
-	"NeogitOrg/neogit",
-	dependencies = {
-		"nvim-lua/plenary.nvim",
-		"sindrets/diffview.nvim",
-		"nvim-telescope/telescope.nvim",
-	},
-	keys = {
-		-- diffview
-		{ "<leader>dv", "<cmd>DiffviewOpen<cr>", mode = "n", desc = "Open Diffview" },
-		{ "<leader>dc", "<cmd>DiffviewClose<cr>", mode = "n", desc = "Close Diffview" },
-		-- diff‐mode navigation & ops (only when &diff is set)
-		{
-			"<leader>dh",
-			"<cmd>lua if vim.wo.diff then vim.cmd('normal! ]c') end<cr>",
-			mode = "n",
-			desc = "Next diff hunk",
-		},
-		{
-			"<leader>dH",
-			"<cmd>lua if vim.wo.diff then vim.cmd('normal! [c') end<cr>",
-			mode = "n",
-			desc = "Prev diff hunk",
-		},
-		{ "<leader>gd", "<cmd>diffget //2<cr>", mode = "n", desc = "Get hunk from other buffer" },
-		{ "<leader>gD", "<cmd>diffput //2<cr>", mode = "n", desc = "Put hunk to other buffer" },
-
-		-- neogit
-		{ "<leader>gg", "<cmd>Neogit<cr>", mode = "n", desc = "Open Neogit" },
-		{ "<leader>gc", "<cmd>Neogit commit<cr>", mode = "n", desc = "Neogit: commit" },
-		{ "<leader>gp", "<cmd>Neogit pull<cr>", mode = "n", desc = "Neogit: pull" },
-		{ "<leader>gP", "<cmd>Neogit push<cr>", mode = "n", desc = "Neogit: push" },
-	},
+  "NeogitOrg/neogit",
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+    "sindrets/diffview.nvim",
+    "nvim-telescope/telescope.nvim",
+  },
+  keys = {
+    { "<leader>dv", "<Cmd>DiffviewOpen<CR>", mode = "n", desc = "Open Diffview" },
+    { "<leader>dc", "<Cmd>DiffviewClose<CR>", mode = "n", desc = "Close Diffview" },
+    {
+      "<leader>dh",
+      function()
+        if vim.wo.diff then
+          vim.cmd("normal! ]c")
+        end
+      end,
+      mode = "n",
+      desc = "Next diff hunk",
+    },
+    {
+      "<leader>dH",
+      function()
+        if vim.wo.diff then
+          vim.cmd("normal! [c")
+        end
+      end,
+      mode = "n",
+      desc = "Previous diff hunk",
+    },
+    { "<leader>dg", "<Cmd>diffget //2<CR>", mode = "n", desc = "Get hunk from other buffer" },
+    { "<leader>dG", "<Cmd>diffput //2<CR>", mode = "n", desc = "Put hunk to other buffer" },
+    { "<leader>gg", "<Cmd>Neogit<CR>", mode = "n", desc = "Open Neogit" },
+    { "<leader>gC", "<Cmd>Neogit commit<CR>", mode = "n", desc = "Neogit Commit" },
+    { "<leader>gp", "<Cmd>Neogit pull<CR>", mode = "n", desc = "Neogit Pull" },
+    { "<leader>gP", "<Cmd>Neogit push<CR>", mode = "n", desc = "Neogit Push" },
+  },
 }

@@ -1,40 +1,33 @@
 return {
-    {
-        "ellisonleao/gruvbox.nvim",
-        priority = 1000,
-        config = true,
-        opts = {},
-    },
-    {
-        "sainnhe/gruvbox-material",
-        priority = 1000,
-        lazy = false,
-    },
-    {
-        "ayu-theme/ayu-vim",
-        lazy = false,
-        priority = 1000,
-    },
-    {
-        "xero/miasma.nvim",
-        lazy = false,
-        priority = 1000,
-    },
-    {
-        "folke/tokyonight.nvim",
-        lazy = false,
-        priority = 1000,
-        opts = {},
-    },
-    {
-        "neanias/everforest-nvim",
-        version = false,
-        lazy = false,
-        priority = 1000,
-        config = function()
-            require("everforest").setup({
-                -- Your config here
-            })
-        end,
-    },
+  {
+    "ellisonleao/gruvbox.nvim",
+    lazy = false,
+    priority = 1000,
+    opts = {},
+  },
+  {
+    "sainnhe/gruvbox-material",
+    lazy = true,
+  },
+  {
+    "ayu-theme/ayu-vim",
+    lazy = true,
+  },
+  {
+    "xero/miasma.nvim",
+    lazy = true,
+  },
+  {
+    "folke/tokyonight.nvim",
+    lazy = true,
+    priority = 1000,
+  },
+  {
+    "neanias/everforest-nvim",
+    version = false,
+    lazy = false,
+    config = function()
+      require("everforest").setup({})
+    end,
+  },
 }

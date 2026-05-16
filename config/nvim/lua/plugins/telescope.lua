@@ -1,82 +1,198 @@
 return {
-	{
-		"nvim-telescope/telescope.nvim",
-		tag = "0.1.8",
-		dependencies = { "nvim-lua/plenary.nvim" },
-		keys = {
-			{ "<leader>pf", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
-			{ "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live Grep" },
-			{ "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Find Buffers" },
-			{ "<leader>fh", "<cmd>Telescope help_tags<cr>", desc = "Find Help" },
-			{ "<leader>fc", "<cmd>Telescope colorscheme<cr>", desc = "Find Theme" },
+  {
+    "nvim-telescope/telescope.nvim",
+    version = "*",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      {
+        "nvim-telescope/telescope-fzf-native.nvim",
+        build = "make",
+        cond = function()
+          return vim.fn.executable("make") == 1
+        end,
+      },
+    },
+    keys = {
+      {
+        "<leader>pf",
+        function()
+          local opts = {
+            hidden = true,
+            no_ignore = false,
+            file_ignore_patterns = { "%.git/" },
+          }
 
-			-- LSP/Diagnostics
-			{ "<leader>fd", "<cmd>Telescope diagnostics bufnr=0<cr>", desc = "Find Diagnostics (Buffer)" },
-			{ "<leader>fD", "<cmd>Telescope diagnostics<cr>", desc = "Find Diagnostics (Workspace)" },
-			{ "<leader>fr", "<cmd>Telescope lsp_references<cr>", desc = "Find References" },
-			{ "<leader>fs", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Find Symbols" },
-			{ "<leader>fS", "<cmd>Telescope lsp_workspace_symbols<cr>", desc = "Find Workspace Symbols" },
+          if vim.fn.executable("rg") == 1 then
+            opts.find_command = {
+              "rg",
+              "--files",
+              "--hidden",
+              "--glob",
+              "!.git",
+              "--glob",
+              "!**/.git/*",
+            }
+          end
 
-			-- Git
-			{ "<leader>gc", "<cmd>Telescope git_commits<cr>", desc = "Git Commits" },
-			{ "<leader>gs", "<cmd>Telescope git_status<cr>", desc = "Git Status" },
-			{ "<leader>gS", "<cmd>Telescope git_stash<cr>", desc = "Git Stash" },
-		},
-		config = function()
-			local telescope = require("telescope")
-			local actions = require("telescope.actions")
+          require("telescope.builtin").find_files(opts)
+        end,
+        desc = "Find Files",
+      },
+      {
+        "<leader>fg",
+        function()
+          require("telescope.builtin").live_grep()
+        end,
+        desc = "Live Grep",
+      },
+      {
+        "<leader>fb",
+        function()
+          require("telescope.builtin").buffers()
+        end,
+        desc = "Find Buffers",
+      },
+      {
+        "<leader>fh",
+        function()
+          require("telescope.builtin").help_tags()
+        end,
+        desc = "Find Help",
+      },
+      {
+        "<leader>fc",
+        function()
+          require("telescope.builtin").colorscheme()
+        end,
+        desc = "Find Theme",
+      },
 
-			telescope.setup({
-				defaults = {
-					mappings = {
-						i = {
-							-- ["qq"] = actions.close,
-							["<CR>"] = function(prompt_bufnr)
-								local selection = require("telescope.actions.state").get_selected_entry()
-								if selection then
-									actions.select_default(prompt_bufnr)
-								else
-                  return
-								end
-							end,
-						},
-						n = {
-							["q"] = actions.close,
-							["<CR>"] = function(prompt_bufnr)
-								local selection = require("telescope.actions.state").get_selected_entry()
-								if selection then
-									actions.select_default(prompt_bufnr)
-								else
-                  return
-								end
-							end,
-						},
-					},
-				},
-				pickers = {
-					buffers = {
-						show_all_buffers = true,
-						sort_lastused = true,
-						theme = "dropdown",
-						previewer = false,
-					},
-				},
-			})
-		end,
-	},
-	{
-		"nvim-telescope/telescope-ui-select.nvim",
-		config = function()
-			require("telescope").setup({
-				extensions = {
-					["ui-select"] = {
-						require("telescope.themes").get_dropdown({
-							-- even more opts
-						}),
-					},
-				},
-			})
-			require("telescope").load_extension("ui-select")
-		end,
-	},
+      -- LSP/Diagnostics
+      {
+        "<leader>fd",
+        function()
+          require("telescope.builtin").diagnostics({ bufnr = 0 })
+        end,
+        desc = "Find Diagnostics (Buffer)",
+      },
+      {
+        "<leader>fD",
+        function()
+          require("telescope.builtin").diagnostics()
+        end,
+        desc = "Find Diagnostics (Workspace)",
+      },
+      {
+        "<leader>fr",
+        function()
+          require("telescope.builtin").lsp_references()
+        end,
+        desc = "Find References",
+      },
+      {
+        "<leader>fs",
+        function()
+          require("telescope.builtin").lsp_document_symbols()
+        end,
+        desc = "Find Symbols",
+      },
+      {
+        "<leader>fS",
+        function()
+          require("telescope.builtin").lsp_workspace_symbols()
+        end,
+        desc = "Find Workspace Symbols",
+      },
+
+      -- Git
+      {
+        "<leader>gc",
+        function()
+          require("telescope.builtin").git_commits()
+        end,
+        desc = "Git Commits",
+      },
+      {
+        "<leader>gs",
+        function()
+          require("telescope.builtin").git_status()
+        end,
+        desc = "Git Status",
+      },
+      {
+        "<leader>gS",
+        function()
+          require("telescope.builtin").git_stash()
+        end,
+        desc = "Git Stash",
+      },
+    },
+    config = function()
+      local telescope = require("telescope")
+      local actions = require("telescope.actions")
+      local action_state = require("telescope.actions.state")
+
+      local function select_if_present(prompt_bufnr)
+        if action_state.get_selected_entry() then
+          actions.select_default(prompt_bufnr)
+        end
+      end
+
+      -- Flash jump within a Telescope picker: labels each result row so you
+      -- can skip directly to any entry without arrow-key scrolling.
+      local function flash_in_picker(prompt_bufnr)
+        require("flash").jump({
+          pattern = "^",
+          label = { after = { 0, 0 } },
+          search = {
+            mode = "search",
+            exclude = {
+              function(win)
+                return vim.bo[vim.api.nvim_win_get_buf(win)].filetype ~= "TelescopeResults"
+              end,
+            },
+          },
+          action = function(match)
+            local picker = action_state.get_current_picker(prompt_bufnr)
+            picker:set_selection(match.pos[1] - 1)
+          end,
+        })
+      end
+
+      telescope.setup({
+        defaults = {
+          path_display = { "smart" },
+          mappings = {
+            i = {
+              ["<CR>"] = select_if_present,
+              ["<c-s>"] = flash_in_picker,
+            },
+            n = {
+              ["q"] = actions.close,
+              ["<CR>"] = select_if_present,
+              ["s"] = flash_in_picker,
+            },
+          },
+        },
+        pickers = {
+          buffers = {
+            show_all_buffers = true,
+            sort_lastused = true,
+            theme = "dropdown",
+            previewer = false,
+          },
+        },
+        extensions = {
+          fzf = {
+            fuzzy = true,
+            override_generic_sorter = true,
+            override_file_sorter = true,
+            case_mode = "smart_case",
+          },
+        },
+      })
+
+      pcall(telescope.load_extension, "fzf")
+    end,
+  },
 }

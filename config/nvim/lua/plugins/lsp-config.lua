@@ -1,17 +1,9 @@
 return {
-  -- schemastore
-  {
-    "b0o/SchemaStore.nvim",
-    lazy = true,
-  },
-
-  -- mason
   {
     "williamboman/mason.nvim",
     cmd = "Mason",
     config = true,
   },
-
   {
     "williamboman/mason-lspconfig.nvim",
     dependencies = { "williamboman/mason.nvim" },
@@ -25,6 +17,8 @@ return {
           "cssls",
           "dockerls",
           "docker_compose_language_service",
+          "gopls",
+          "helm_ls",
           "jsonls",
           "lua_ls",
           "marksman",
@@ -41,205 +35,265 @@ return {
       })
     end,
   },
-
-  -- nvim-lspconfig
   {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile" },
     dependencies = {
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
+      { "b0o/schemastore.nvim", version = false },
+      "hrsh7th/cmp-nvim-lsp",
     },
     config = function()
-      local function set_hl_for_floating_window()
-        vim.api.nvim_set_hl(0, "NormalFloat", {
-          link = "Normal", -- make float background the same as editor background
-        })
-        vim.api.nvim_set_hl(0, "FloatBorder", {
-          bg = "none", -- make the border background transparent
-        })
-      end
-
-      set_hl_for_floating_window()
-
-      -- create an autocommand to apply the styling whenever a colorscheme is loaded.
-      -- this prevents my settings from being overwritten by a theme.
-      vim.api.nvim_create_autocmd("ColorScheme", {
-        pattern = "*",
-        desc = "Apply custom float styles after colorscheme loads",
-        callback = set_hl_for_floating_window,
-      })
-
+      local util = require("lspconfig.util")
+      local schemastore = require("schemastore")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
+      local ansible_root_markers = {
+        "ansible.cfg",
+        "playbook.yml",
+        "playbook.yaml",
+        "site.yml",
+        "site.yaml",
+        "playbooks",
+        "roles",
+        "inventory",
+      }
 
-      -- styling
-      local function setup_styling()
-        local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
-        function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
-          opts = opts or {}
-          opts.border = opts.border or "rounded"
-          opts.max_width = opts.max_width or 100
-          opts.max_height = opts.max_height or 30
-          return orig_util_open_floating_preview(contents, syntax, opts, ...)
-        end
+      local function set_float_highlights()
+        vim.api.nvim_set_hl(0, "NormalFloat", { link = "Normal" })
+        vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none" })
       end
 
-      -- keymaps
-      local function setup_keymaps()
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, {})
-        vim.keymap.set("n", "gd", vim.lsp.buf.definition, {})
-        vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { silent = true, desc = "Show Code Action" })
-        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { silent = true, desc = "Rename variables" })
-        vim.keymap.set(
-          "n",
-          "<leader>e",
-          vim.diagnostic.open_float,
-          { silent = true, desc = "Show Line Diagnostics" }
-        )
+      local function default_root_dir(fname)
+        return util.find_git_ancestor(fname) or vim.fs.dirname(fname)
       end
 
-      setup_styling()
-      setup_keymaps()
+      local function setup_server(server, server_opts)
+        server_opts.capabilities = server_opts.capabilities or capabilities
+        vim.lsp.config(server, server_opts)
+        vim.lsp.enable(server)
+      end
 
-      -- config
-      local lspconfig = require("lspconfig")
+      set_float_highlights()
 
-      lspconfig.lua_ls.setup({
-        capabilities = capabilities,
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        desc = "Reapply floating window highlights",
+        callback = set_float_highlights,
       })
-      lspconfig.ts_ls.setup({
-        capabilities = capabilities,
-      })
-      lspconfig.cssls.setup({
-        capabilities = capabilities,
-        settings = {
-          css = { validate = true },
-          scss = { validate = true },
+
+      -- Clean up HTML tags and backslash escapes from LSP hover content before
+      -- stylize_markdown runs, so treesitter sees clean markdown from the start.
+      -- ansiblels (archived, no upstream fix) sends ansible-doc output as
+      -- HTML-mixed markdown that Neovim's renderer can't handle natively.
+      local orig_convert = vim.lsp.util.convert_input_to_markdown_lines
+      vim.lsp.util.convert_input_to_markdown_lines = function(input, contents)
+        contents = orig_convert(input, contents)
+        return vim.tbl_map(function(line)
+          line = line:gsub("<code><strong>(.-)</strong></code>", "**`%1`**")
+          line = line:gsub("<strong><code>(.-)</code></strong>", "**`%1`**")
+          line = line:gsub("<code>(.-)</code>", "`%1`")
+          line = line:gsub("<strong>(.-)</strong>", "**%1**")
+          line = line:gsub("<em>(.-)</em>", "*%1*")
+          line = line:gsub("<[^>]+>", "")
+          line = line:gsub("\\(.)", "%1")
+          return line
+        end, contents)
+      end
+
+      local original_open_floating_preview = vim.lsp.util.open_floating_preview
+      function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+        opts = opts or {}
+        opts.border = opts.border or "rounded"
+        opts.max_width = opts.max_width or 100
+        opts.max_height = opts.max_height or 30
+        return original_open_floating_preview(contents, syntax, opts, ...)
+      end
+
+      vim.diagnostic.config({
+        severity_sort = true,
+        float = {
+          border = "rounded",
+          source = "if_many",
+          max_width = 100,
         },
       })
-      lspconfig.jsonls.setup({
-        capabilities = capabilities,
-        settings = {
-          json = {
-            schemas = require('schemastore').json.schemas({
-              select = {
-                'package.json',
-                'tsconfig.json',
-              },
-            }),
-            -- schemas = require('schemastore').json.schemas(),
-            validate = { enable = true },
-          }
-        }
-      })
-      require("lspconfig").basedpyright.setup({
-        capabilities = capabilities,
-        settings = {
-          basedpyright = {
-            disableOrganizeImports = true,
-            analysis = {
-              typeCheckingMode = "basic",
-              reportMissingTypeStubs = false,
-              reportAny = false,
-              reportUndefinedVariable = true,
-              reportAttributeAccessIssue = true,
-              useLibraryCodeForTypes = true,
 
-              diagnosticSeverityOverrides = {
-                reportUnusedImport = "none",
+      local lsp_group = vim.api.nvim_create_augroup("LspKeymaps", { clear = true })
+      vim.api.nvim_create_autocmd("LspAttach", {
+        group = lsp_group,
+        desc = "Set buffer-local LSP keymaps",
+        callback = function(event)
+          local map = function(lhs, rhs, desc)
+            vim.keymap.set("n", lhs, rhs, { buffer = event.buf, silent = true, desc = desc })
+          end
+
+          map("K", vim.lsp.buf.hover, "Hover Documentation")
+          map("gd", vim.lsp.buf.definition, "Go to Definition")
+          map("gD", vim.lsp.buf.declaration, "Go to Declaration")
+          map("gi", vim.lsp.buf.implementation, "Go to Implementation")
+          map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
+          map("<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
+          map("<leader>e", vim.diagnostic.open_float, "Show Line Diagnostics")
+
+          local client = vim.lsp.get_client_by_id(event.data.client_id)
+          if client and client.name == "gopls" then
+            client.server_capabilities.documentFormattingProvider = false
+          end
+        end,
+      })
+
+      local servers = {
+        lua_ls = {},
+        ts_ls = {},
+        marksman = {},
+        taplo = {},
+        dockerls = {},
+        rust_analyzer = {},
+        cssls = {
+          settings = {
+            css = { validate = true },
+            scss = { validate = true },
+          },
+        },
+        jsonls = {
+          settings = {
+            json = {
+              schemas = schemastore.json.schemas(),
+              validate = { enable = true },
+            },
+          },
+        },
+        basedpyright = {
+          settings = {
+            basedpyright = {
+              disableOrganizeImports = true,
+              analysis = {
+                typeCheckingMode = "basic",
+                reportMissingTypeStubs = false,
+                reportAny = false,
+                reportUndefinedVariable = true,
+                reportAttributeAccessIssue = true,
+                useLibraryCodeForTypes = true,
+                diagnosticSeverityOverrides = {
+                  reportUnusedImport = "none",
+                  reportMissingParameterType = "none",
+                  reportCallIssue = "none",
+                },
               },
             },
           },
         },
-      })
-      lspconfig.marksman.setup({
-        capabilities = capabilities,
-      })
-      lspconfig.taplo.setup({
-        capabilities = capabilities,
-      })
-      lspconfig.yamlls.setup({
-        capabilities = capabilities,
-        settings = {
-          yaml = {
-            format = {
-              enable = true,
+        yamlls = {
+          filetypes = { "yaml", "yaml.helm-values" },
+          capabilities = vim.tbl_deep_extend("force", capabilities, {
+            textDocument = {
+              foldingRange = { dynamicRegistration = false, lineFoldingOnly = true },
             },
-            schemaStore = {
-              enable = false,
-              url = "",
+          }),
+          settings = {
+            redhat = { telemetry = { enabled = false } },
+            yaml = {
+              format = { enable = true },
+              validate = true,
+              keyOrdering = false,
+              schemaStore = { enable = false, url = "" },
+              kubernetesCRDStore = { enable = true },
+              schemas = vim.tbl_deep_extend("force", schemastore.yaml.schemas(), {
+                kubernetes = {
+                  "k8s/**/*.{yaml,yml}",
+                  "kubernetes/**/*.{yaml,yml}",
+                  "manifests/**/*.{yaml,yml}",
+                  "*.k8s.{yaml,yml}",
+                },
+              }),
             },
-            schemas = require('schemastore').yaml.schemas(),
           },
         },
-      })
-      lspconfig.ansiblels.setup({
-        capabilities = capabilities,
-        filetypes = { "yaml", "yml" },
-        settings = {
-          ansible = {
+        ansiblels = {
+          filetypes = { "yaml.ansible" },
+          root_dir = function(bufnr, on_dir)
+            local fname = vim.api.nvim_buf_get_name(bufnr)
+            local root = util.root_pattern(unpack(ansible_root_markers))(fname)
+
+            on_dir(root or default_root_dir(fname))
+          end,
+          settings = {
             ansible = {
-              path = "ansible",
-            },
-            executionEnvironment = {
-              enabled = false,
-            },
-            python = {
-              interpreterPath = "python3",
-            },
-            completion = {
-              provideRedirectModules = true,
-              provideModuleOptionAliases = true,
-            },
-          },
-        },
-      })
-      lspconfig.bashls.setup({
-        capabilities = capabilities,
-        filetypes = { "bash", "sh", "zsh" },
-      })
-      lspconfig.dockerls.setup({
-        capabilities = capabilities,
-      })
-      lspconfig.docker_compose_language_service.setup({
-        capabilities = capabilities,
-      })
-      lspconfig.tailwindcss.setup({
-        capabilities = capabilities,
-        filetypes = { "typescriptreact", "javascriptreact", "css", "scss", "html" },
-        settings = {
-          tailwindCSS = {
-            classAttributes = { "class", "className" },
-            lint = {
-              cssConflict = "warning",
-              invalidApply = "error",
-              invalidConfigPath = "error",
-              invalidScreen = "error",
-              invalidTailwindDirective = "error",
-              invalidVariant = "error",
-              recommendedVariantOrder = "warning"
-            },
-            validate = true
-          }
-        }
-      })
-      lspconfig.rust_analyzer.setup({
-        capabilities = capabilities
-      })
-      lspconfig.terraformls.setup({
-        capabilities = capabilities,
-        filetypes = { "terraform", "tf", "hcl" },
-        settings = {
-          terraform = {
-            formatting = {
-              enable = true,
-            },
-            validation = {
-              enable = true,
+              ansible = {
+                path = "ansible",
+              },
+              executionEnvironment = {
+                enabled = false,
+              },
+              python = {
+                interpreterPath = "python3",
+              },
+              completion = {
+                provideRedirectModules = true,
+                provideModuleOptionAliases = true,
+              },
+              validation = {
+                lint = { enabled = false },
+              },
             },
           },
         },
-      })
+        bashls = {
+          filetypes = { "bash", "sh", "zsh" },
+        },
+        docker_compose_language_service = {
+          filetypes = { "yaml.docker-compose" },
+        },
+        tailwindcss = {
+          filetypes = { "typescriptreact", "javascriptreact", "css", "scss", "html" },
+          settings = {
+            tailwindCSS = {
+              classAttributes = { "class", "className" },
+              lint = {
+                cssConflict = "warning",
+                invalidApply = "error",
+                invalidConfigPath = "error",
+                invalidScreen = "error",
+                invalidTailwindDirective = "error",
+                invalidVariant = "error",
+                recommendedVariantOrder = "warning",
+              },
+              validate = true,
+            },
+          },
+        },
+        gopls = {},
+        helm_ls = {
+          filetypes = { "helm" },
+          settings = {
+            ["helm-ls"] = {
+              yamlls = {
+                enabled = true,
+                path = "yaml-language-server",
+                showDiagnosticsDirectly = false,
+                diagnosticsLimit = 50,
+              },
+            },
+          },
+        },
+        terraformls = {
+          filetypes = { "terraform" },
+          settings = {
+            terraform = {
+              formatting = {
+                enable = true,
+              },
+              validation = {
+                enable = true,
+              },
+            },
+          },
+        },
+      }
+
+      for server, server_opts in pairs(servers) do
+        setup_server(server, server_opts)
+      end
     end,
   },
 }
