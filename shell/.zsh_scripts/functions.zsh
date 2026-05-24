@@ -313,3 +313,18 @@ function kubeclear() {
 }
 
 function envup() { set -a; source "${1:-.env}"; set +a; }
+
+# Run tree, strip ANSI color codes, and copy the clean output to the clipboard
+function treecopy() {
+  if ! command -v tree >/dev/null 2>&1; then
+    echo "tree not found. Install it with: sudo dnf install tree" >&2
+    return 1
+  fi
+
+  local output
+  output=$(tree -n "$@" | sed $'s/\x1b\\[[0-9;]*[a-zA-Z]//g') || return $?
+
+  printf '%s\n' "$output" | xclip -selection clipboard
+  printf '%s\n' "$output"
+  echo "(copied to clipboard)"
+}

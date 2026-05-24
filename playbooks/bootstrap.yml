@@ -186,8 +186,26 @@
                 dest: "{{ actual_user_home }}/.zshrc"
                 state: link
 
+            - name: Remove existing .zsh_scripts if it exists
+              ansible.builtin.file:
+                path: "{{ actual_user_home }}/.zsh_scripts"
+                state: absent
+
             - name: Create .zsh_scripts symlink
               ansible.builtin.file:
                 src: "{{ playbook_dir }}/../shell/.zsh_scripts"
                 dest: "{{ actual_user_home }}/.zsh_scripts"
                 state: link
+
+    - name: Final message
+      ansible.builtin.debug:
+        msg: |
+          ========================================
+          Fedora Bootstrap Complete!
+          ========================================
+
+          Next steps:
+          1. Restart your terminal or run: exec zsh
+          2. Verify installations: nvim --version, python --version, node --version
+
+          Have fun!
