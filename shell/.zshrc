@@ -111,6 +111,12 @@ if [ $commands[oc] ]; then
   compdef _oc oc
 fi
 
+# kubectl autocomplete
+if [ $commands[kubectl] ]; then
+  source <(kubectl completion zsh)
+  compdef _kubectl kubectl
+fi
+
 # Zoxide (smarter cd)
 if command -v zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
