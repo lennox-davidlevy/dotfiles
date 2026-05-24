@@ -47,7 +47,10 @@ export PATH="$HOME/.opencode/bin:$PATH"
 export EDITOR=nvim
 export SYSTEMD_EDITOR=nvim
 export KUBE_EDITOR='nvim'
+
+# === Opencode ===
 export OPENCODE_ENABLE_EXA=1
+export OPENCODE_DISABLE_CLAUDE_CODE=1
 
 # === Python Environment Manager (pyenv) ===
 export PYENV_ROOT="$HOME/.pyenv"
@@ -87,11 +90,23 @@ fi
 source ~/powerlevel10k/powerlevel10k.zsh-theme
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+# === p10k overrides (survive `p10k configure` regenerations) ===
+# Show kubecontext continuously when a context is active (covers `oc login`).
+# unset POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND
+# Tag OpenShift-shaped contexts (oc login writes <ns>/<api-host>:<port>/<user>).
+typeset -g POWERLEVEL9K_KUBECONTEXT_CLASSES=(
+    '*/api-*:*/*'  OPENSHIFT
+    '*:6443/*'     OPENSHIFT
+    '*'            DEFAULT)
+# OpenShift visual identifier (nf-fa-redhat, U+EF5D).
+typeset -g POWERLEVEL9K_KUBECONTEXT_OPENSHIFT_VISUAL_IDENTIFIER_EXPANSION=''
+# Concise content: "<short-cluster>/<namespace>" e.g. "argocd3/vault-verify".
+typeset -g POWERLEVEL9K_KUBECONTEXT_OPENSHIFT_CONTENT_EXPANSION='${${${P9K_KUBECONTEXT_CLUSTER#api-}%%:*}%%-*}/${P9K_KUBECONTEXT_NAMESPACE}'
+
 # === Custom Scripts ===
 [ -f ~/.zsh_scripts/tmux-autostart.zsh ] && source ~/.zsh_scripts/tmux-autostart.zsh
 [ -f ~/.zsh_scripts/aliases.zsh ] && source ~/.zsh_scripts/aliases.zsh
 [ -f ~/.zsh_scripts/functions.zsh ] && source ~/.zsh_scripts/functions.zsh
-# [ -f ~/.zsh_scripts/secrets.zsh ] && source ~/.zsh_scripts/secrets.zsh
 
 # === Environment Directories ===
 [ -f ~/.env_directories ] && source ~/.env_directories
