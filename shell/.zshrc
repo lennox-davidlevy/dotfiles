@@ -41,6 +41,7 @@ export SYSTEMD_EDITOR=nvim
 export KUBE_EDITOR='nvim'
 export OPENCODE_ENABLE_EXA=1
 export OPENCODE_DISABLE_CLAUDE_CODE=1
+export GTK_THEME=Adwaita:dark
 
 # === Python Environment Manager (pyenv) ===
 export PYENV_ROOT="$HOME/.pyenv"

@@ -186,7 +186,7 @@ bindsym $mod+shift+s scratchpad show
 # Monitor Adjustment
 # exec --no-startup-id xrandr --output HDMI-0 --primary --auto --output HDMI-1 --auto --left-of HDMI-0
 exec --no-startup-id sleep 2 && xrandr --output DP-1 --auto --output HDMI-0 --primary --auto --right-of DP-1
-# exec --no-startup-id feh --bg-fill $HOME/Pictures/wallpapers/hills.jpg
+exec --no-startup-id sleep 3 && feh --bg-fill $HOME/Pictures/wallpapers/8bit_background.png --bg-fill $HOME/Pictures/wallpapers/mountain_landscape.jpg
 
 
 # Launch tmux with a utils session already created
