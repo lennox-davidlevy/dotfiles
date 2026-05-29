@@ -102,6 +102,22 @@ vim.api.nvim_create_autocmd("VimEnter", {
   end,
 })
 
+-- Set cwd to the directory when launching `nvim <dir>`, so pickers
+-- (telescope live_grep, snacks, etc.) search the opened directory rather
+-- than the shell's working directory.
+local cwd_group = vim.api.nvim_create_augroup("DirArgCwd", { clear = true })
+
+vim.api.nvim_create_autocmd("VimEnter", {
+  group = cwd_group,
+  desc = "cd into directory argument on launch",
+  callback = function()
+    local arg = vim.fn.argv(0)
+    if type(arg) == "string" and arg ~= "" and vim.fn.isdirectory(arg) == 1 then
+      vim.cmd.cd(vim.fn.fnameescape(arg))
+    end
+  end,
+})
+
 -- Ansible filetype detection
 local ansible_group = vim.api.nvim_create_augroup("Ansible", { clear = true })
 

@@ -15,7 +15,7 @@ map("n", "tr", "<Cmd>tabclose<CR>", opts("Close current tab"))
 map("n", "<leader>o", "<Cmd>only<CR>", opts("Close other windows"))
 
 -- Turn off search highlight
-map("n", "<CR>", "<Cmd>nohlsearch<CR>", opts("Clear search highlight"))
+-- map("n", "<CR>", "<Cmd>nohlsearch<CR>", opts("Clear search highlight"))
 
 -- Stay in indent mode
 map("v", "<", "<gv", opts("Indent left and reselect"))

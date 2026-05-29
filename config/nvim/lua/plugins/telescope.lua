@@ -41,7 +41,17 @@ return {
       {
         "<leader>fg",
         function()
-          require("telescope.builtin").live_grep()
+          require("telescope.builtin").live_grep({
+            additional_args = function()
+              return {
+                "--hidden",
+                "--glob",
+                "!.git",
+                "--glob",
+                "!**/.git/*",
+              }
+            end,
+          })
         end,
         desc = "Live Grep",
       },
@@ -138,6 +148,19 @@ return {
         end
       end
 
+      -- Send results to the quickfix list, then open them in the snacks
+      -- quickfix picker. If entries are multi-selected (<Tab>), only those
+      -- are sent; otherwise all results go to the quickfix list.
+      local function send_to_snacks_qflist(prompt_bufnr)
+        local picker = action_state.get_current_picker(prompt_bufnr)
+        if next(picker:get_multi_selection()) then
+          actions.send_selected_to_qflist(prompt_bufnr)
+        else
+          actions.send_to_qflist(prompt_bufnr)
+        end
+        require("snacks").picker.qflist()
+      end
+
       -- Flash jump within a Telescope picker: labels each result row so you
       -- can skip directly to any entry without arrow-key scrolling.
       local function flash_in_picker(prompt_bufnr)
@@ -166,11 +189,13 @@ return {
             i = {
               ["<CR>"] = select_if_present,
               ["<c-s>"] = flash_in_picker,
+              ["<c-t>"] = send_to_snacks_qflist,
             },
             n = {
               ["q"] = actions.close,
               ["<CR>"] = select_if_present,
               ["s"] = flash_in_picker,
+              ["<c-t>"] = send_to_snacks_qflist,
             },
           },
         },

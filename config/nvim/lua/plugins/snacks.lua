@@ -18,5 +18,56 @@ return {
       end,
       desc = "Open Lazygit",
     },
+
+    -- Diagnostics / symbols / references / quickfix (snacks.picker)
+    {
+      "<leader>xx",
+      function()
+        Snacks.picker.diagnostics_buffer()
+      end,
+      desc = "Diagnostics (Buffer)",
+    },
+    {
+      "<leader>xX",
+      function()
+        Snacks.picker.diagnostics()
+      end,
+      desc = "Diagnostics (Workspace)",
+    },
+    {
+      "<leader>xs",
+      function()
+        Snacks.picker.lsp_symbols()
+      end,
+      desc = "LSP Symbols (Document)",
+    },
+    {
+      "<leader>xS",
+      function()
+        Snacks.picker.lsp_workspace_symbols()
+      end,
+      desc = "LSP Symbols (Workspace)",
+    },
+    {
+      "<leader>xr",
+      function()
+        Snacks.picker.lsp_references()
+      end,
+      desc = "LSP References",
+    },
+    {
+      "<leader>xq",
+      function()
+        Snacks.picker.qflist()
+      end,
+      desc = "Quickfix List",
+    },
+    {
+      "<leader>xl",
+      function()
+        Snacks.picker.loclist()
+      end,
+      desc = "Location List",
+    },
   },
 }
