@@ -63,6 +63,13 @@ return {
       desc = "Quickfix List",
     },
     {
+      "<c-t>",
+      function()
+        Snacks.picker.qflist()
+      end,
+      desc = "Quickfix List",
+    },
+    {
       "<leader>xl",
       function()
         Snacks.picker.loclist()

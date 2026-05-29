@@ -45,6 +45,10 @@ return {
       "hrsh7th/cmp-nvim-lsp",
     },
     config = function()
+      -- Only log genuine LSP errors. The default level records routine RPC
+      -- traffic, which (combined with chatty servers) bloats lsp.log.
+      vim.lsp.log.set_level(vim.log.levels.ERROR)
+
       local util = require("lspconfig.util")
       local schemastore = require("schemastore")
       local capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -139,13 +143,33 @@ return {
           if client and client.name == "gopls" then
             client.server_capabilities.documentFormattingProvider = false
           end
+
+          -- terraform-ls (<=0.38.6) emits invalid semanticTokens for heredoc
+          -- blocks with interpolations: it computes negative column deltas that
+          -- overflow uint32, which hangs Neovim 0.12 while typing (e.g. inside
+          -- `<<-EOT`). Disable semantic tokens; treesitter handles highlighting.
+          -- See terraform-ls#2108, LazyVim#7086.
+          if client and client.name == "terraformls" then
+            client.server_capabilities.semanticTokensProvider = nil
+          end
         end,
       })
 
       local servers = {
         lua_ls = {},
         ts_ls = {},
-        marksman = {},
+        marksman = {
+          -- Diffview/gitsigns open markdown buffers with non-file:// URIs
+          -- (e.g. diffview://...). Marksman can only parse file:// URIs and
+          -- crashes ("Invalid URI") on init, so only attach for real files.
+          root_dir = function(bufnr, on_dir)
+            local name = vim.api.nvim_buf_get_name(bufnr)
+            if name == "" or name:find("://") then
+              return
+            end
+            on_dir(vim.fs.dirname(name))
+          end,
+        },
         taplo = {},
         dockerls = {},
         rust_analyzer = {},
@@ -278,6 +302,11 @@ return {
         },
         terraformls = {
           filetypes = { "terraform" },
+          -- terraform-ls logs its entire internal job scheduler to stderr, which
+          -- Neovim captures into lsp.log (tagged [ERROR]), bloating it to tens of
+          -- MB per session. Redirect the server's own log to /dev/null to silence
+          -- it; diagnostics/completion are unaffected.
+          cmd = { "terraform-ls", "serve", "-log-file", "/dev/null" },
           settings = {
             terraform = {
               formatting = {

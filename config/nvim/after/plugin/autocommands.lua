@@ -1,7 +1,7 @@
 -- Auto-reload buffers when files change on disk
 local autoread_group = vim.api.nvim_create_augroup("AutoRead", { clear = true })
 
-vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI", "TermLeave" }, {
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermLeave" }, {
   group = autoread_group,
   desc = "Reload buffer if changed on disk",
   callback = function()
@@ -10,6 +10,15 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
     end
   end,
 })
+-- vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI", "TermLeave" }, {
+--   group = autoread_group,
+--   desc = "Reload buffer if changed on disk",
+--   callback = function()
+--     if vim.fn.mode() ~= "c" and vim.fn.bufexists("[Command Line]") == 0 then
+--       vim.cmd("checktime")
+--     end
+--   end,
+-- })
 
 vim.api.nvim_create_autocmd("FileChangedShellPost", {
   group = autoread_group,
