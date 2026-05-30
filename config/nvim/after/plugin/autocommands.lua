@@ -1,7 +1,7 @@
 -- Auto-reload buffers when files change on disk
 local autoread_group = vim.api.nvim_create_augroup("AutoRead", { clear = true })
 
-vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI", "TermLeave" }, {
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermLeave" }, {
   group = autoread_group,
   desc = "Reload buffer if changed on disk",
   callback = function()
@@ -10,6 +10,15 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
     end
   end,
 })
+-- vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI", "TermLeave" }, {
+--   group = autoread_group,
+--   desc = "Reload buffer if changed on disk",
+--   callback = function()
+--     if vim.fn.mode() ~= "c" and vim.fn.bufexists("[Command Line]") == 0 then
+--       vim.cmd("checktime")
+--     end
+--   end,
+-- })
 
 vim.api.nvim_create_autocmd("FileChangedShellPost", {
   group = autoread_group,
@@ -99,6 +108,22 @@ vim.api.nvim_create_autocmd("VimEnter", {
   desc = "Style split separators",
   callback = function()
     vim.cmd("hi WinSeparator cterm=bold gui=bold guifg=#d7ffd7")
+  end,
+})
+
+-- Set cwd to the directory when launching `nvim <dir>`, so pickers
+-- (telescope live_grep, snacks, etc.) search the opened directory rather
+-- than the shell's working directory.
+local cwd_group = vim.api.nvim_create_augroup("DirArgCwd", { clear = true })
+
+vim.api.nvim_create_autocmd("VimEnter", {
+  group = cwd_group,
+  desc = "cd into directory argument on launch",
+  callback = function()
+    local arg = vim.fn.argv(0)
+    if type(arg) == "string" and arg ~= "" and vim.fn.isdirectory(arg) == 1 then
+      vim.cmd.cd(vim.fn.fnameescape(arg))
+    end
   end,
 })
 

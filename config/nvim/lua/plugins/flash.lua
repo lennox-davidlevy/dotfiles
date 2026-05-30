@@ -1,7 +1,12 @@
 return {
   "folke/flash.nvim",
   event = "VeryLazy",
-  opts = {},
+  opts = {
+    modes = {
+      -- Keep built-in f/F/t/T/;/, behavior; only use flash via s/S/<c-s>.
+      char = { enabled = false },
+    },
+  },
   keys = {
     {
       "s",

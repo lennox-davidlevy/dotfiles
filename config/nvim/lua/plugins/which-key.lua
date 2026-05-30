@@ -18,6 +18,7 @@ return {
       { "<leader>f", group = "Find" },
       { "<leader>g", group = "Git" },
       { "<leader>r", group = "Remote" },
+      { "<leader>x", group = "Diagnostics/Lists" },
     })
   end,
 }
