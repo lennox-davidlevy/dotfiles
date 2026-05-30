@@ -110,7 +110,9 @@ return {
         opts.border = opts.border or "rounded"
         opts.max_width = opts.max_width or 100
         opts.max_height = opts.max_height or 30
-        return original_open_floating_preview(contents, syntax, opts, ...)
+        local bufnr, winnr = original_open_floating_preview(contents, syntax, opts, ...)
+        vim.api.nvim_set_option_value("spell", false, { win = winnr })
+        return bufnr, winnr
       end
 
       vim.diagnostic.config({
@@ -200,6 +202,7 @@ return {
                 useLibraryCodeForTypes = true,
                 diagnosticSeverityOverrides = {
                   reportUnusedImport = "none",
+                  reportUnusedVariable = "none",
                   reportMissingParameterType = "none",
                   reportCallIssue = "none",
                 },
@@ -283,6 +286,16 @@ return {
                 recommendedVariantOrder = "warning",
               },
               validate = true,
+            },
+          },
+        },
+        ruff = {
+          on_attach = function(client)
+            client.server_capabilities.hoverProvider = false
+          end,
+          init_options = {
+            settings = {
+              organizeImports = false,
             },
           },
         },
