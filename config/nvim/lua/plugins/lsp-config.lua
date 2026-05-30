@@ -106,7 +106,9 @@ return {
         opts.border = opts.border or "rounded"
         opts.max_width = opts.max_width or 100
         opts.max_height = opts.max_height or 30
-        return original_open_floating_preview(contents, syntax, opts, ...)
+        local bufnr, winnr = original_open_floating_preview(contents, syntax, opts, ...)
+        vim.api.nvim_set_option_value("spell", false, { win = winnr })
+        return bufnr, winnr
       end
 
       vim.diagnostic.config({
@@ -134,11 +136,6 @@ return {
           map("<leader>ca", vim.lsp.buf.code_action, "Code Action")
           map("<leader>rn", vim.lsp.buf.rename, "Rename Symbol")
           map("<leader>e", vim.diagnostic.open_float, "Show Line Diagnostics")
-
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.name == "gopls" then
-            client.server_capabilities.documentFormattingProvider = false
-          end
         end,
       })
 
@@ -176,6 +173,7 @@ return {
                 useLibraryCodeForTypes = true,
                 diagnosticSeverityOverrides = {
                   reportUnusedImport = "none",
+                  reportUnusedVariable = "none",
                   reportMissingParameterType = "none",
                   reportCallIssue = "none",
                 },
@@ -262,7 +260,21 @@ return {
             },
           },
         },
-        gopls = {},
+        ruff = {
+          on_attach = function(client)
+            client.server_capabilities.hoverProvider = false
+          end,
+          init_options = {
+            settings = {
+              organizeImports = false,
+            },
+          },
+        },
+        gopls = {
+          on_attach = function(client)
+            client.server_capabilities.documentFormattingProvider = false
+          end,
+        },
         helm_ls = {
           filetypes = { "helm" },
           settings = {
