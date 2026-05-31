@@ -206,11 +206,20 @@ function kubeclear() {
 
 function envup() { set -a; source "${1:-.env}"; set +a; }
 
-# Open a new tmux window with a 3-pane dev layout:
+# Open a tmux 3-pane dev layout:
 #   - left column: large top pane + ~20% height bottom pane
 #   - right column: full-height pane, ~20% screen width
 # Usage: devlayout [name] [start_dir]
+#        devlayout --here [start_dir]   # build layout in the current window
 function devlayout() {
+  local here=false
+
+  # Pull an optional --here/-h flag from the front of the args.
+  if [[ "$1" == "--here" || "$1" == "-h" ]]; then
+    here=true
+    shift
+  fi
+
   local name="${1:-DEV}"
   local start_dir="${2:-$PWD}"
 
@@ -219,9 +228,16 @@ function devlayout() {
     return 1
   fi
 
-  # Create the new window and capture its id so splits target it reliably.
+  # Determine the target window: reuse the current one with --here,
+  # otherwise create a new window and capture its id so splits target it reliably.
   local win
-  win=$(tmux new-window -P -F '#{window_id}' -n "$name" -c "$start_dir") || return 1
+  if [[ "$here" == true ]]; then
+    # When reusing the current window, take start_dir from the first arg.
+    start_dir="${1:-$PWD}"
+    win=$(tmux display-message -p '#{window_id}') || return 1
+  else
+    win=$(tmux new-window -P -F '#{window_id}' -n "$name" -c "$start_dir") || return 1
+  fi
 
   # Right pane: ~20% of the full width, spanning the full height.
   tmux split-window -h -p 30 -t "$win" -c "$start_dir"
