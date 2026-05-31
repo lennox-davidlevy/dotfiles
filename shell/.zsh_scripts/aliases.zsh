@@ -53,3 +53,6 @@ alias ts=ts-node
 
 # VI in line
 alias setvi="set -o vi"
+
+# layout tmux panes nicely for dev
+alias dl="devlayout"

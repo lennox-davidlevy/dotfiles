@@ -30,88 +30,6 @@ function addenv() {
   echo "Added and sourced: export $varname='$dirpath'"
 }
 
-# === pyenv virtualenv helpers ===
-function vmake {
-  if [ -z "$1" ]; then
-    echo "Usage: vmake <env_name> [python_version]"
-    return 1
-  fi
-
-  local env_name=$1
-  local python_version=${2:-$(pyenv global)}
-
-  if pyenv versions --bare | grep -q "^${env_name}$"; then
-    echo "Virtual environment '${env_name}' already exists."
-    return 1
-  fi
-
-  pyenv virtualenv ${python_version} ${env_name}
-
-  if [ $? -eq 0 ]; then
-    echo "Virtual environment '${env_name}' created successfully."
-  else
-    echo "Failed to create virtual environment '${env_name}'."
-    return 1
-  fi
-}
-
-function vdel {
-  if [ -z "$1" ]; then
-    echo "Usage: vdel <env_name>"
-    return 1
-  fi
-
-  local env_name=$1
-
-  if ! pyenv versions --bare | grep -q "^${env_name}$"; then
-    echo "Environment '${env_name}' does not exist."
-    return 1
-  fi
-
-  pyenv uninstall -f ${env_name}
-
-  if [ $? -eq 0 ]; then
-    echo "Environment '${env_name}' deleted successfully."
-  else
-    echo "Failed to delete environment '${env_name}'."
-    return 1
-  fi
-}
-
-function vlist {
-  pyenv virtualenvs
-}
-
-function vstart {
-  if [ -z "$1" ]; then
-    echo "Usage: vstart <env_name>"
-    return 1
-  fi
-  local env_name=$1
-
-  init_pyenv_virtualenv
-  pyenv activate "$env_name"
-
-  if [ $? -eq 0 ]; then
-    echo "Activated environment '$env_name'. Restarting shell..."
-    exec $SHELL
-  else
-    echo "Failed to activate environment '$env_name'."
-    return 1
-  fi
-}
-
-function vstop {
-  pyenv deactivate
-}
-
-function init_pyenv_virtualenv {
-  if [ -z "$PYENV_VIRTUALENV_INIT" ]; then
-    eval "$(pyenv virtualenv-init -)"
-    export PYENV_VIRTUALENV_INIT=1
-  fi
-}
-
 # SSH nonsense
 ssh() {
   if [[ -n "$TMUX" ]]; then
@@ -216,39 +134,6 @@ fp() {
   fi
 }
 
-# Create a new project with standard directory structure
-function newproject {
-  if [ -z "$1" ]; then
-    echo "Usage: newproject <project_name>"
-    return 1
-  fi
-
-  local project_name=$1
-  local project_path="./${project_name}"
-
-  if [ -d "$project_path" ]; then
-    echo "Error: Project '${project_name}' already exists at ${project_path}"
-    return 1
-  fi
-
-  echo "Creating project '${project_name}'..."
-  mkdir -p "${project_path}"/{notes,videos,docs,presentations,projects}
-
-  if [ $? -eq 0 ]; then
-    echo "Project '${project_name}' created successfully!"
-    echo "  ${project_path}/notes/"
-    echo "  ${project_path}/videos/"
-    echo "  ${project_path}/docs/"
-    echo "  ${project_path}/presentations/"
-    echo "  ${project_path}/projects/"
-    echo ""
-    echo "To navigate: cd ${project_name}"
-  else
-    echo "Failed to create project '${project_name}'."
-    return 1
-  fi
-}
-
 # Sign in and set secret environment values
 function sign-in() {
   if command -v op &> /dev/null; then
@@ -313,6 +198,34 @@ function kubeclear() {
 }
 
 function envup() { set -a; source "${1:-.env}"; set +a; }
+
+# Open a new tmux window with a 3-pane dev layout:
+#   - left column: large top pane + ~20% height bottom pane
+#   - right column: full-height pane, ~20% screen width
+# Usage: devlayout [name] [start_dir]
+function devlayout() {
+  local name="${1:-DEV}"
+  local start_dir="${2:-$PWD}"
+
+  if [[ -z "$TMUX" ]]; then
+    echo "Not inside a tmux session. Start tmux first, then run devlayout." >&2
+    return 1
+  fi
+
+  # Create the new window and capture its id so splits target it reliably.
+  local win
+  win=$(tmux new-window -P -F '#{window_id}' -n "$name" -c "$start_dir") || return 1
+
+  # Right pane: ~20% of the full width, spanning the full height.
+  tmux split-window -h -p 30 -t "$win" -c "$start_dir"
+
+  # Back on the left column, split off a ~20% height bottom pane.
+  tmux select-pane -t "${win}.0"
+  tmux split-window -v -p 25 -t "${win}.0" -c "$start_dir"
+
+  # Leave focus on the large top-left pane.
+  tmux select-pane -t "${win}.0"
+}
 
 # Run tree, strip ANSI color codes, and copy the clean output to the clipboard
 function treecopy() {
