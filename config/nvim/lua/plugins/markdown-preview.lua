@@ -1,7 +1,9 @@
 return {
   "iamcco/markdown-preview.nvim",
   cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-  build = "cd app && npm install && git checkout -- yarn.lock && rm -f package-lock.json",
+  build = function()
+    vim.fn.system("cd app && npx --yes yarn install --frozen-lockfile")
+  end,
   init = function()
     vim.g.mkdp_filetypes = { "markdown" }
   end,
