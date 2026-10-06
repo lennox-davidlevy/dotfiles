@@ -33,3 +33,9 @@ Thumbs.db
 # Local environment
 .env
 .env.local
+
+# opencode
+.opencode
+
+# cache
+.cache

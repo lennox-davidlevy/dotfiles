@@ -142,3 +142,6 @@ if command -v vault &> /dev/null; then
 fi
 
 fpath+=~/.zfunc
+
+# bun completions
+[ -s "/home/david/.bun/_bun" ] && source "/home/david/.bun/_bun"

@@ -68,6 +68,10 @@ bindsym $mod+d exec --no-startup-id ~/.config/rofi/launchers/type-1/launcher.sh
 # Volume Control
 bindsym $mod+Shift+v exec --no-startup-id ~/.config/rofi/applets/bin/volume.sh
 
+# Restore native display resolution (fixes screen left at 1280x800 after a
+# Sunshine stream / Big Picture exit that didn't auto-revert)
+bindsym $mod+Shift+d exec --no-startup-id ~/.local/bin/fix-display
+
 # Screenshot (saves to clipboard and ~/screenshots directory)
 bindsym Mod1+s exec NOW=$(date +%d-%b-%Y_%H-%M-%S) && maim --format png --select > ~/screenshots/screenshot_$NOW.png && xclip -selection clip -t image/png ~/screenshots/screenshot_$NOW.png
 
