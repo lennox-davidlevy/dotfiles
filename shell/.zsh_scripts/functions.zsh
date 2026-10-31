@@ -79,7 +79,7 @@ remote-open() {
   url=${url%.git}
 
   echo "Opening: $url"
-  xdg-open "$url"
+  xdg-open "$url" >/dev/null 2>&1 &!
 }
 
 remote-copy() {

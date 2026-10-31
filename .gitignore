@@ -36,6 +36,7 @@ Thumbs.db
 
 # opencode
 .opencode
+.opencode.bak
 
 # cache
 .cache

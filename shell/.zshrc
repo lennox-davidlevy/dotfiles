@@ -145,3 +145,10 @@ fpath+=~/.zfunc
 
 # bun completions
 [ -s "/home/david/.bun/_bun" ] && source "/home/david/.bun/_bun"
+
+# fnm
+FNM_PATH="/home/david/.local/share/fnm"
+if [ -d "$FNM_PATH" ]; then
+  export PATH="$FNM_PATH:$PATH"
+  eval "$(fnm env --shell zsh)"
+fi
