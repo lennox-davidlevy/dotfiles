@@ -282,3 +282,6 @@ bar {
 
 # for screen tearing
 exec --no-startup-id picom --backend glx &
+
+# for bluetooth
+exec --no-startup-id blueman-applet

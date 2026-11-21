@@ -41,7 +41,7 @@ volume master {
 
 load {
     format = "Load: %5min"
-    max_threshold = "2.5"
+    max_threshold = "24"
 }
 
 tztime local {

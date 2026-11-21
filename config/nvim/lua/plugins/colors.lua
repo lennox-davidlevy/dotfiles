@@ -1,8 +1,16 @@
 return {
   {
-    "ellisonleao/gruvbox.nvim",
+    "datsfilipe/vesper.nvim",
     lazy = false,
     priority = 1000,
+  },
+  {
+    "savq/melange-nvim",
+    lazy = true,
+  },
+  {
+    "ellisonleao/gruvbox.nvim",
+    lazy = true,
     opts = {},
   },
   {
