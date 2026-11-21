@@ -134,18 +134,6 @@ fp() {
   fi
 }
 
-# Sign in and set secret environment values
-function sign-in() {
-  if command -v op &> /dev/null; then
-    export BOBSHELL_API_KEY=$(op read "op://Private/Project Bob API key/credential" 2>/dev/null)
-    echo "Signed in and BOBSHELL_API_KEY set."
-    export TEST_API_KEY="hello"
-    echo "Signed in and TEST_API_KEY set."
-  else
-    echo "op command not found."
-  fi
-}
-
 # pick a kubeconfig from ~/.kube/configs and export it for this shell
 function kubepick() {
   local configs_dir="$HOME/.kube/configs"

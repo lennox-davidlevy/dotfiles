@@ -92,7 +92,6 @@ typeset -g POWERLEVEL9K_KUBECONTEXT_OPENSHIFT_CONTENT_EXPANSION='${${${P9K_KUBEC
 [ -f ~/.zsh_scripts/tmux-autostart.zsh ] && source ~/.zsh_scripts/tmux-autostart.zsh
 [ -f ~/.zsh_scripts/aliases.zsh ] && source ~/.zsh_scripts/aliases.zsh
 [ -f ~/.zsh_scripts/functions.zsh ] && source ~/.zsh_scripts/functions.zsh
-# [ -f ~/.zsh_scripts/secrets.zsh ] && source ~/.zsh_scripts/secrets.zsh
 
 # === Environment Directories ===
 [ -f ~/.env_directories ] && source ~/.env_directories
